@@ -30,20 +30,12 @@ public class Role implements GrantedAuthority {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    public Role(Long id) {
-        this.id = id;
-    }
-
-    public Role(Long id, String name) {
-        this.id = id;
-        this.name = ERole.valueOf(name);
-    }
-
     public Role(Long id, ERole name) {
         this.id = id;
         this.name = name;
     }
 
+    @Transient
     @Override
     public String getAuthority() {
         return name.toString();

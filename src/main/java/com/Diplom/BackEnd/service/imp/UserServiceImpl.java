@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User register(User user) {
-        Role roleUser =  roleRepo.findByName(ERole.ROLE_TEACHER).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        Role roleUser =  roleRepo.findByName(ERole.ROLE_TEACHER);
         user.setRoles(Set.of(roleUser));
 
         User savedUser  = userRepo.save(user);

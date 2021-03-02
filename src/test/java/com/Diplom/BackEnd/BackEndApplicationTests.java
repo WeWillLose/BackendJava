@@ -1,8 +1,10 @@
 package com.Diplom.BackEnd;
 
 import com.Diplom.BackEnd.model.Chairman_Slaves;
+import com.Diplom.BackEnd.model.ERole;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.Chairman_slavesRepo;
+import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ class BackEndApplicationTests {
 
 	@Autowired
 	Chairman_slavesRepo chairman_slavesRepo;
+
+	@Autowired
+	RoleRepo roleRepo;
 
 	void createUsers(){
 		User user1 = new User();
@@ -60,11 +65,13 @@ class BackEndApplicationTests {
 		System.out.println(bySlavesContaining.getChairman().getUsername());
 	}
 
+	void testError(){
+		roleRepo.findByName(ERole.ROLE_TEACHER);
+	}
+
 	@Test
 	void contextLoads() {
-		createUsers();
-		setSlaves();
-		test();
+		testError();
 	}
 
 }

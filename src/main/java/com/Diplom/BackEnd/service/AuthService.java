@@ -1,14 +1,11 @@
 package com.Diplom.BackEnd.service;
 
-import com.Diplom.BackEnd.model.User;
-import com.Diplom.BackEnd.payload.request.LoginRequest;
-import com.Diplom.BackEnd.payload.request.SignupRequest;
-import com.Diplom.BackEnd.payload.response.JwtResponse;
-import com.Diplom.BackEnd.payload.response.UserResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.Diplom.BackEnd.dto.LoginDTO;
+import com.Diplom.BackEnd.dto.SignupDTO;
+import com.Diplom.BackEnd.dto.UserDTO;
+import com.Diplom.BackEnd.exception.MyException;
 
 public interface AuthService {
-    UserResponse authenticateUser(@RequestBody LoginRequest loginRequest);
-    UserResponse registerUser (SignupRequest signupRequest);
+    UserDTO authenticateUser(LoginDTO loginDTO) throws MyException;
+    UserDTO  registerUser (SignupDTO signupDTO) throws MyException;
 }

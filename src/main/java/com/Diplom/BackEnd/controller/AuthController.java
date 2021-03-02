@@ -1,10 +1,10 @@
 package com.Diplom.BackEnd.controller;
 
-import com.Diplom.BackEnd.payload.request.LoginRequest;
-import com.Diplom.BackEnd.payload.request.SignupRequest;
-import com.Diplom.BackEnd.payload.response.JwtResponse;
-import com.Diplom.BackEnd.payload.response.MessageResponse;
-import com.Diplom.BackEnd.payload.response.UserResponse;
+import com.Diplom.BackEnd.dto.LoginDTO;
+import com.Diplom.BackEnd.dto.SignupDTO;
+import com.Diplom.BackEnd.dto.UserDTO;
+import com.Diplom.BackEnd.exception.MyException;
+import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
 import com.Diplom.BackEnd.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,25 +20,27 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("login")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-
-        UserResponse response = authService.authenticateUser(loginRequest);
-        if (response == null){
-            return ResponseEntity.badRequest().body("Пользователь не найден");
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginDTO) {
+        try{
+            UserDTO userDTO = authService.authenticateUser(loginDTO);
+            return ResponseEntity.ok().body(userDTO);
+        }catch (MyException e){
+            return e.getResponseEntity();
+        }catch (Exception e){
+            return new ServerErrorImpl().getResponseEntity();
         }
 
-        return ResponseEntity.ok(response);
     }
 
     @PostMapping("registration")
-    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest) {
-        try {
-            UserResponse response = authService.registerUser(signUpRequest);
-            return ResponseEntity.ok(response);
+    public ResponseEntity<?> registerUser(@RequestBody SignupDTO signUpDTO) {
+        try{
+            UserDTO userDTO = authService.registerUser(signUpDTO);
+            return ResponseEntity.ok().body(userDTO);
+        }catch (MyException e){
+            return e.getResponseEntity();
         }catch (Exception e){
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse(e.getMessage()));
+            return new ServerErrorImpl().getResponseEntity();
         }
     }
 

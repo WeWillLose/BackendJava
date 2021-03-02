@@ -1,10 +1,10 @@
-package com.Diplom.BackEnd.payload.request;
+package com.Diplom.BackEnd.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 @Data
 @AllArgsConstructor
-public class SignupRequest {
+public class SignupDTO {
     private String username;
     private String password;
     private String firstName;

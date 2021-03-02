@@ -1,8 +1,7 @@
 package com.Diplom.BackEnd.model;
 
-import com.Diplom.BackEnd.payload.jsonView.AdminResponse;
-import com.Diplom.BackEnd.payload.jsonView.Response;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.Diplom.BackEnd.dto.jsonView.AdminResponse;
+import com.Diplom.BackEnd.dto.jsonView.Response;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -27,19 +25,20 @@ public class User implements UserDetails, Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "user_id_generator")
     @SequenceGenerator(name = "user_id_generator",initialValue = 1,allocationSize = 5,sequenceName = "user_id_sequence")
     private Long id;
-    @JsonView(Response.class)
+
     @Column(unique = true)
     private String username;
-    @JsonView(AdminResponse.class)
+
     @Column
     private String password;
-    @JsonView(Response.class)
+
     @Column(name = "first_name")
     private String firstName;
-    @JsonView(Response.class)
+
     @Column(name = "last_name")
     private String lastName;
-    @JsonView(Response.class)
+
+
     @Column
     private String patronymic;
 
@@ -73,27 +72,27 @@ public class User implements UserDetails, Serializable {
 
 
 
-
+    @Transient
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
     }
-
+    @Transient
     @Override
     public boolean isAccountNonExpired() {
         return getIsActive();
     }
-
+    @Transient
     @Override
     public boolean isAccountNonLocked() {
         return getIsActive();
     }
-
+    @Transient
     @Override
     public boolean isCredentialsNonExpired() {
         return getIsActive();
     }
-
+    @Transient
     @Override
     public boolean isEnabled() {
         return getIsActive();

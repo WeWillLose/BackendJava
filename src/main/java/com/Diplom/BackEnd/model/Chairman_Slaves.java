@@ -15,7 +15,6 @@ public class Chairman_Slaves {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @OneToOne
     private User chairman;
 

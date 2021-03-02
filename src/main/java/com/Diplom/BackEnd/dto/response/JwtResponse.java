@@ -1,8 +1,7 @@
-package com.Diplom.BackEnd.payload.response;
+package com.Diplom.BackEnd.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Set;
 

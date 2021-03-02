@@ -1,11 +1,10 @@
-package com.Diplom.BackEnd.payload.response;
+package com.Diplom.BackEnd.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class MessageResponse {
+public class ErrorMessageDTO {
     private String message;
 }
