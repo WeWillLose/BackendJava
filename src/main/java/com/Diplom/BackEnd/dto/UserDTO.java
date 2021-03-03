@@ -5,7 +5,10 @@ import com.Diplom.BackEnd.model.Role;
 import com.Diplom.BackEnd.model.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.mapping.Collection;
 
+import java.beans.Transient;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -56,8 +59,17 @@ public class UserDTO {
         this.lastName = user.getLastName();
         this.patronymic = user.getPatronymic();
         this.roles = user.getRoles().stream().map(t -> new RoleDTO(t.getName().name())).collect(Collectors.toSet());
-        this.chairman = new UserDTO(chairman);
-        this.slaves = slaves.stream().map(UserDTO::new).collect(Collectors.toSet());
+        if(chairman == null){
+            this.chairman = null;
+        }else{
+            this.chairman = new UserDTO(chairman);
+        }
+        if(slaves == null){
+            this.slaves = new HashSet<>();
+        }else{
+            this.slaves = slaves.stream().map(UserDTO::new).collect(Collectors.toSet());
+        }
+
     }
 
     public UserDTO(User user) {
@@ -68,5 +80,6 @@ public class UserDTO {
         this.patronymic = user.getPatronymic();
         this.roles = user.getRoles().stream().map(t -> new RoleDTO(t.getName().name())).collect(Collectors.toSet());
     }
+
 
 }

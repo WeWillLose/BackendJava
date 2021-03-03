@@ -11,6 +11,6 @@ public class UserNotFoundExceptionImpl extends MyException {
     }
 
     public UserNotFoundExceptionImpl() {
-        super(HttpStatus.NOT_FOUND, new ErrorMessageDTO("Ошибка авторизации"));
+        super(HttpStatus.NOT_FOUND, new ErrorMessageDTO("Пользователь с такими данными не найден"));
     }
 }

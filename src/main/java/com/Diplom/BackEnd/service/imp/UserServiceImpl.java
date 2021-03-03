@@ -1,73 +1,171 @@
 package com.Diplom.BackEnd.service.imp;
 
-import com.Diplom.BackEnd.model.ERole;
-import com.Diplom.BackEnd.model.Role;
+import com.Diplom.BackEnd.dto.UserDTO;
+import com.Diplom.BackEnd.exception.MyException;
+import com.Diplom.BackEnd.exception.impl.BadRequestImpl;
+import com.Diplom.BackEnd.exception.impl.UserNotFoundExceptionImpl;
+import com.Diplom.BackEnd.model.Chairman_Slaves;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
+import com.Diplom.BackEnd.service.Chairman_slavesService;
+import com.Diplom.BackEnd.service.MapperToUserDTOService;
 import com.Diplom.BackEnd.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService{
-    private final UserRepo userRepo;
-    private final RoleRepo roleRepo;
+    @Autowired
+    private UserRepo userRepo;
+    @Autowired
+    private RoleRepo roleRepo;
+    @Autowired
+    private MapperToUserDTOService mapperToUserDTOService;
+    @Autowired
+    private Chairman_slavesService chairman_slavesService;
+    @Autowired
+    PasswordEncoder encoder;
 
-    public UserServiceImpl(UserRepo userRepo, RoleRepo roleRepo) {
-        this.userRepo = userRepo;
-        this.roleRepo = roleRepo;
-    }
-
-    @Override
-    public User register(User user) {
-        Role roleUser =  roleRepo.findByName(ERole.ROLE_TEACHER);
-        user.setRoles(Set.of(roleUser));
-
-        User savedUser  = userRepo.save(user);
-
-        log.info("In register - user {} successful registered", savedUser);
-        return savedUser;
-    }
 
     @Override
-    public List<User> getAll() {
+    public List<User> getAll() throws MyException {
         List<User> users = userRepo.findAll();
-
-        return users;
+        return  users;
     }
 
     @Override
-    public User findById(Long id) {
-        User user = userRepo.findById(id).orElse(null);
-        if (user != null){
-            log.info("In findById - user {} found by id {}",user,id);
-        }else {
-            log.info("In findById - no user found by id {}",id);
+    public User findById(Long id) throws MyException{
+        User user = userRepo.findById(id).orElseThrow(UserNotFoundExceptionImpl::new);
+        log.info("IN findById by {} found {}",id,user);
+        return user;
+    }
+
+    @Override
+    public User findByUsername(String username) throws MyException {
+        User user = userRepo.findByUsername(username);
+        if(user == null){
+            throw new UserNotFoundExceptionImpl();
+        }
+        return user;
+    }
+
+    @Override
+    public void delete(Long id) throws MyException{
+        if(id == null){
+            throw new NullPointerException("id must not be null");
+        }
+        userRepo.findById(id).orElseThrow(UserNotFoundExceptionImpl::new);
+        userRepo.deleteById(id);
+        log.info("In delete - user wos deleted by id {}",id);
+    }
+
+    public UserDTO getUserDtoByUserAndFindChairman_slaves(User user) throws NullPointerException{
+        if(user == null){
+            throw new NullPointerException("user must not be null");
+        }
+        Chairman_Slaves chairman_slaves = chairman_slavesService.getChairman_slavesByUser(user);
+        return mapperToUserDTOService.mapToUserDto(user,chairman_slaves);
+    }
+
+    @Override
+    public List<UserDTO> getUserDtoByUserAndFindChairman_slaves(List<User> user) throws NullPointerException {
+       return user.stream()
+                .map(this::getUserDtoByUserAndFindChairman_slaves)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public User updateUserInfo(User sourceUser, User changedUser) throws MyException{
+        if(sourceUser == null){
+            throw new NullPointerException("sourceUser must not be null");
+        }
+        if(changedUser == null){
+            throw new NullPointerException("changedUser must not be null");
+        }
+        if(changedUser.getFirstName() != null && !changedUser.getFirstName().isBlank()){
+            sourceUser.setFirstName(changedUser.getFirstName());
+        }
+        if(changedUser.getLastName() != null && !changedUser.getLastName().isBlank()){
+            sourceUser.setLastName(changedUser.getLastName());
+        }
+        if(changedUser.getPatronymic() != null &&!changedUser.getPatronymic().isBlank() ){
+            sourceUser.setPatronymic(changedUser.getPatronymic());
         }
 
-        return user;
+        return userRepo.save(sourceUser);
     }
 
     @Override
-    public User findByUsername(String username) {
-        User user = userRepo.findByUsername(username);
+    public User updateUserInfo(Long id, User user) throws MyException{
+        if(user == null){
+            throw new NullPointerException("userDTO must not be null");
+        }
+        User byId = userRepo.findById(id).orElseThrow(UserNotFoundExceptionImpl::new);
 
-        log.info("In findByUsername - user {} found by username {}",user,username);
-        return user;
+        if(!userRepo.existsById(user.getId())){
+            throw new BadRequestImpl();
+        }
+        return updateUserInfo(byId,user);
+    }
+    @Override
+    public User updateUserInfo(Long id, UserDTO userDTO) throws MyException{
+        if(userDTO == null){
+            throw new NullPointerException("userDTO must not be null");
+        }
+       return updateUserInfo(id,mapperToUserDTOService.mapToUser(userDTO));
+    }
+
+
+
+
+    @Override
+    public User setPassword(Long id, String password) throws MyException {
+        if(id== null){
+            throw new NullPointerException("id must not be null");
+        }
+        if(password== null){
+            throw new NullPointerException("password must not be null");
+        }
+        User byId = userRepo.findById(id).orElseThrow(UserNotFoundExceptionImpl::new);
+        return setPassword(byId,password);
     }
 
     @Override
-    public void delete(Long id) {
-        userRepo.deleteById(id);
+    public User setPassword(User user, String password) throws MyException {
+        if(user== null){
+            throw new NullPointerException("user must not be null");
+        }
+        if(password== null){
+            throw new NullPointerException("password must not be null");
+        }
+        if(!password.isEmpty()){
+            user.setPassword(encoder.encode(password));
+        }
+        return userRepo.save(user);
+    }
 
-        log.info("In delete - user wos deleted by id {}",id);
+    @Override
+    public boolean existsById(Long id) throws NullPointerException {
+        if(id == null){
+            throw new NullPointerException("id must not be null");
+        }
+        return userRepo.existsById(id);
+    }
+
+    @Override
+    public boolean existsByUsername(String username) throws NullPointerException {
+        if(username == null){
+            throw new NullPointerException("id must not be null");
+        }
+        return userRepo.existsByUsername(username);
     }
 
 

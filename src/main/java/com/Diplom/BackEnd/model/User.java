@@ -1,7 +1,6 @@
 package com.Diplom.BackEnd.model;
 
-import com.Diplom.BackEnd.dto.jsonView.AdminResponse;
-import com.Diplom.BackEnd.dto.jsonView.Response;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +22,7 @@ public class User implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "user_id_generator")
-    @SequenceGenerator(name = "user_id_generator",initialValue = 1,allocationSize = 5,sequenceName = "user_id_sequence")
+    @SequenceGenerator(name = "user_id_generator",initialValue = 2,allocationSize = 5,sequenceName = "user_id_sequence")
     private Long id;
 
     @Column(unique = true)
@@ -39,18 +38,24 @@ public class User implements UserDetails, Serializable {
     private String lastName;
 
 
+
     @Column
     private String patronymic;
 
-    @JsonView(Response.class)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(	name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+
     @Column(name = "is_active")
     private Boolean isActive = true;
+
+    public Boolean getIsActive(){
+        if (isActive == null) return true;
+        return isActive;
+    }
 
     public User(String username, String password, String lastName, String firstName, String patronymic, Set<Role> roles, Boolean isActive) {
         this.username = username;

@@ -27,6 +27,7 @@ public class AuthController {
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
+            e.printStackTrace();
             return new ServerErrorImpl().getResponseEntity();
         }
 
@@ -40,6 +41,7 @@ public class AuthController {
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
+            e.printStackTrace();
             return new ServerErrorImpl().getResponseEntity();
         }
     }

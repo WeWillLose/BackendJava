@@ -1,16 +1,25 @@
 package com.Diplom.BackEnd;
 
+import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.model.Chairman_Slaves;
 import com.Diplom.BackEnd.model.ERole;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.Chairman_slavesRepo;
 import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.webservices.client.WebServiceClientTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 
 @SpringBootTest
 class BackEndApplicationTests {
@@ -68,10 +77,22 @@ class BackEndApplicationTests {
 	void testError(){
 		roleRepo.findByName(ERole.ROLE_TEACHER);
 	}
+	void testtest() throws JsonProcessingException {
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		HashSet<Object> objects = new HashSet<>();
+		UserDTO userDTO = new UserDTO();
+		userDTO.setUsername("u1");
+		UserDTO userDTO1 = new UserDTO();
+		userDTO1.setUsername("u2");
+		objects.add(userDTO);
+		objects.add(userDTO1);
+		System.out.println(objectMapper.writeValueAsString(objects));
+	}
 
 	@Test
-	void contextLoads() {
-		testError();
+	void contextLoads() throws JsonProcessingException {
+		testtest();
 	}
 
 }

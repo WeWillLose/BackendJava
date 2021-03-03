@@ -8,4 +8,5 @@ public interface Chairman_slavesRepo extends JpaRepository<Chairman_Slaves, Long
     Chairman_Slaves findByChairman_Username(String username);
     Chairman_Slaves findBySlavesContains(User slave);
 
+
 }
