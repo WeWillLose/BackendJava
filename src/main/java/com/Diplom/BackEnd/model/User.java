@@ -20,6 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class User implements UserDetails, Serializable {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "user_id_generator")
     @SequenceGenerator(name = "user_id_generator",initialValue = 2,allocationSize = 5,sequenceName = "user_id_sequence")
@@ -36,8 +37,6 @@ public class User implements UserDetails, Serializable {
 
     @Column(name = "last_name")
     private String lastName;
-
-
 
     @Column
     private String patronymic;

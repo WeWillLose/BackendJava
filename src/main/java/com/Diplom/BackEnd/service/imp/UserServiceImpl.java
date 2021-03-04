@@ -5,6 +5,8 @@ import com.Diplom.BackEnd.exception.MyException;
 import com.Diplom.BackEnd.exception.impl.BadRequestImpl;
 import com.Diplom.BackEnd.exception.impl.UserNotFoundExceptionImpl;
 import com.Diplom.BackEnd.model.Chairman_Slaves;
+import com.Diplom.BackEnd.model.ERole;
+import com.Diplom.BackEnd.model.Role;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
@@ -12,12 +14,14 @@ import com.Diplom.BackEnd.service.Chairman_slavesService;
 import com.Diplom.BackEnd.service.MapperToUserDTOService;
 import com.Diplom.BackEnd.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,9 +39,10 @@ public class UserServiceImpl implements UserService{
     PasswordEncoder encoder;
 
 
+
     @Override
     public List<User> getAll() throws MyException {
-        List<User> users = userRepo.findAll();
+        List<User> users = userRepo.findAllByRolesNotContains(roleRepo.findByName(ERole.ROLE_ADMIN));
         return  users;
     }
 
@@ -62,14 +67,25 @@ public class UserServiceImpl implements UserService{
         if(id == null){
             throw new NullPointerException("id must not be null");
         }
-        userRepo.findById(id).orElseThrow(UserNotFoundExceptionImpl::new);
-        userRepo.deleteById(id);
-        log.info("In delete - user wos deleted by id {}",id);
+        User user = userRepo.findById(id).orElseThrow(UserNotFoundExceptionImpl::new);
+        delete(user);
+    }
+
+    @Override
+    public void delete(User user) throws MyException {
+        if(user == null){
+            throw new NullPointerException("user must not be null");
+        }
+        if(user.getRoles().contains(new Role(ERole.ROLE_ADMIN))){
+            throw new BadRequestImpl("Админа нельзя удалить");
+        }
+        userRepo.delete(user);
+        log.info("In delete - user wos deleted by user {}",user);
     }
 
     public UserDTO getUserDtoByUserAndFindChairman_slaves(User user) throws NullPointerException{
         if(user == null){
-            throw new NullPointerException("user must not be null");
+           return null;
         }
         Chairman_Slaves chairman_slaves = chairman_slavesService.getChairman_slavesByUser(user);
         return mapperToUserDTOService.mapToUserDto(user,chairman_slaves);
@@ -77,6 +93,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<UserDTO> getUserDtoByUserAndFindChairman_slaves(List<User> user) throws NullPointerException {
+        if(user == null){
+            return new ArrayList<>();
+        }
        return user.stream()
                 .map(this::getUserDtoByUserAndFindChairman_slaves)
                 .collect(Collectors.toList());
@@ -110,9 +129,6 @@ public class UserServiceImpl implements UserService{
         }
         User byId = userRepo.findById(id).orElseThrow(UserNotFoundExceptionImpl::new);
 
-        if(!userRepo.existsById(user.getId())){
-            throw new BadRequestImpl();
-        }
         return updateUserInfo(byId,user);
     }
     @Override

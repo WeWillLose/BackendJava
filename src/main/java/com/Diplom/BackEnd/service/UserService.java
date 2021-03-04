@@ -13,6 +13,7 @@ public interface UserService {
     User findById(Long id) throws MyException;
     User findByUsername(String username) throws MyException;
     void delete(Long id) throws MyException;
+    void delete(User id) throws MyException;
     UserDTO getUserDtoByUserAndFindChairman_slaves(User user) throws NullPointerException;
     List<UserDTO> getUserDtoByUserAndFindChairman_slaves(List<User> user) throws NullPointerException;
     User updateUserInfo(Long id,User user) throws MyException;
