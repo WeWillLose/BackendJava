@@ -109,6 +109,9 @@ public class UserServiceImpl implements UserService{
         if(changedUser == null){
             throw new NullPointerException("changedUser must not be null");
         }
+        if(changedUser.getUsername() != null && !changedUser.getUsername().isBlank()){
+            sourceUser.setUsername(changedUser.getUsername());
+        }
         if(changedUser.getFirstName() != null && !changedUser.getFirstName().isBlank()){
             sourceUser.setFirstName(changedUser.getFirstName());
         }

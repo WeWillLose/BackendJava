@@ -1,6 +1,7 @@
 package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.exception.MyException;
+import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
 import com.Diplom.BackEnd.exception.impl.UserAlreadyExistsExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.UserNotFoundExceptionImpl;
@@ -72,6 +73,15 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserDTO registerUser(SignupDTO signUpDTO)  throws MyException{
+        if(signUpDTO == null){
+            throw new NullPointerException("signUpDTO must not be null");
+        }
+        if(signUpDTO.getUsername() == null){
+            throw new NullPointerExceptionImpl("username must not be null");
+        }
+        if(signUpDTO.getPassword() == null){
+            throw new NullPointerExceptionImpl("password must not be null");
+        }
         if (userRepository.existsByUsername(signUpDTO.getUsername())) {
             log.error("IN registerUser user with username: {} already exists",signUpDTO.getUsername());
             throw new  UserAlreadyExistsExceptionImpl();

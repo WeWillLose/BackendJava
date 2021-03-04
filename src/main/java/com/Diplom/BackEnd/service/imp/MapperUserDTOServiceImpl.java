@@ -44,7 +44,7 @@ public class MapperUserDTOServiceImpl implements MapperToUserDTOService {
     public User mapToUser(UserDTO userDTO) {
         User user = new User();
         user.setUsername(userDTO.getUsername());
-        user.setFirstName(userDTO.getUsername());
+        user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setPatronymic(userDTO.getPatronymic());
         user.setRoles(userDTO.getRoles().stream().map(t->new Role(ERole.valueOf(t.getName()))).collect(Collectors.toSet()));
