@@ -1,10 +1,7 @@
 package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.exception.MyException;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
-import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
-import com.Diplom.BackEnd.exception.impl.UserAlreadyExistsExceptionImpl;
-import com.Diplom.BackEnd.exception.impl.UserNotFoundExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.*;
 import com.Diplom.BackEnd.model.Chairman_Slaves;
 import com.Diplom.BackEnd.model.ERole;
 import com.Diplom.BackEnd.model.Role;
@@ -46,23 +43,20 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     MapperToUserDTOService mapperToUserDTOService;
     @Autowired
-    Chairman_slavesService chairman_slavesService;
+    ValidateUserServiceImpl validateUserService;
 
 
     public UserDTO authenticateUser(LoginDTO loginDTO) throws MyException {
+        if(loginDTO == null){
+            throw new NullPointerExceptionImpl("loginDTO must not be null");
+        }
         try{
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
             User user = (User) authentication.getPrincipal();
-            Chairman_Slaves chairman_slaves = chairman_slavesService.getChairman_slavesBySlave(user);
             log.info("IN authenticateUser user with username: {}, password : {} wos authenticated",
                     loginDTO.getUsername(), loginDTO.getPassword());
-            if(chairman_slaves !=null){
-                return mapperToUserDTOService.mapToUserDto(user,chairman_slaves);
-            }
             return mapperToUserDTOService.mapToUserDto(user);
         }catch (AuthenticationException e){
             log.error("IN authenticateUser auth for user with login: {}, and password: {} failed", loginDTO.getUsername(), loginDTO.getPassword());
@@ -73,14 +67,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserDTO registerUser(SignupDTO signUpDTO)  throws MyException{
+        log.info("IN registerUser signUpDTO: {}",signUpDTO);
         if(signUpDTO == null){
-            throw new NullPointerException("signUpDTO must not be null");
+            throw new NullPointerExceptionImpl("signUpDTO must not be null");
         }
         if(signUpDTO.getUsername() == null){
-            throw new NullPointerExceptionImpl("username must not be null");
+            throw new ValidationErrorImpl("Логин должен быть не пустым");
         }
         if(signUpDTO.getPassword() == null){
-            throw new NullPointerExceptionImpl("password must not be null");
+            throw new ValidationErrorImpl("Пароль должен быть не пустым");
+        }
+        if(!validateUserService.validateUserPassword(signUpDTO.getPassword())){
+            throw new ValidationErrorImpl("Пароль не прошел валидацию");
+        }
+        if(!validateUserService.validateUserUsername(signUpDTO.getUsername())){
+            throw new ValidationErrorImpl("Логин не прошел валидацию");
         }
         if (userRepository.existsByUsername(signUpDTO.getUsername())) {
             log.error("IN registerUser user with username: {} already exists",signUpDTO.getUsername());

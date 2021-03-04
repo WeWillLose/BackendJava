@@ -2,6 +2,7 @@ package com.Diplom.BackEnd.exception.impl;
 
 import com.Diplom.BackEnd.dto.ErrorMessageDTO;
 import com.Diplom.BackEnd.exception.MyException;
+import org.apache.logging.log4j.message.StringFormattedMessage;
 import org.springframework.http.HttpStatus;
 
 public class UserNotFoundExceptionImpl extends MyException {
