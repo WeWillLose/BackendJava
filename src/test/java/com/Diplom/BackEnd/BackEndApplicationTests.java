@@ -10,6 +10,8 @@ import com.Diplom.BackEnd.repo.UserRepo;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.webservices.client.WebServiceClientTest;
@@ -17,9 +19,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 @SpringBootTest
 class BackEndApplicationTests {
@@ -90,9 +95,17 @@ class BackEndApplicationTests {
 		System.out.println(objectMapper.writeValueAsString(objects));
 	}
 
+	public void generateReport() throws IOException {
+		XWPFDocument docx = new XWPFDocument(new FileInputStream("template_report.docx"));
+		List<XWPFTable> tables = docx.getTables();
+		tables.forEach(table -> {
+			System.out.println(table.getRow(0));
+		});
+	}
+
 	@Test
-	void contextLoads() throws JsonProcessingException {
-		testtest();
+	void contextLoads() throws IOException {
+		generateReport();
 	}
 
 }

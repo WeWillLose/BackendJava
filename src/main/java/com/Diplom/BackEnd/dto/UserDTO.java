@@ -28,9 +28,6 @@ public class UserDTO {
 
     private Set<RoleDTO> roles = new HashSet<>();
 
-    private UserDTO chairman;
-
-    private Set<UserDTO> slaves = new HashSet<>();
 
     private boolean is_chairman;
 
@@ -38,38 +35,17 @@ public class UserDTO {
     public boolean isIs_chairman() {
         if (roles == null || roles.isEmpty())
             return false;
-        return roles.contains(new RoleDTO(ERole.ROLE_CHAIRMAN));
+//        return roles.contains(new RoleDTO(ERole.ROLE_CHAIRMAN));
+        return false;
     }
 
-    public UserDTO(Long id, String username, String firstName, String lastName, String patronymic, Set<Role> roles, User chairman, Set<User> slaves) {
+    public UserDTO(Long id, String username, String firstName, String lastName, String patronymic, Set<Role> roles) {
         this.id = id;
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
-        this.chairman = new UserDTO(chairman);
-        this.slaves = slaves.stream().map(UserDTO::new).collect(Collectors.toSet());
         this.roles = roles.stream().map(t -> new RoleDTO(t.getName().name())).collect(Collectors.toSet());
-    }
-
-    public UserDTO(User user, User chairman, Set<User> slaves) {
-        this.id = user.getId();
-        this.username = user.getUsername();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.patronymic = user.getPatronymic();
-        this.roles = user.getRoles().stream().map(t -> new RoleDTO(t.getName().name())).collect(Collectors.toSet());
-        if(chairman == null){
-            this.chairman = null;
-        }else{
-            this.chairman = new UserDTO(chairman);
-        }
-        if(slaves == null){
-            this.slaves = new HashSet<>();
-        }else{
-            this.slaves = slaves.stream().map(UserDTO::new).collect(Collectors.toSet());
-        }
-
     }
 
     public UserDTO(User user) {
@@ -79,7 +55,7 @@ public class UserDTO {
         this.lastName = user.getLastName();
         this.patronymic = user.getPatronymic();
         this.roles = user.getRoles().stream().map(t -> new RoleDTO(t.getName().name())).collect(Collectors.toSet());
-    }
 
+    }
 
 }

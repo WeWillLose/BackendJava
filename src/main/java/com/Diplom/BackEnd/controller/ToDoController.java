@@ -4,8 +4,10 @@ import com.Diplom.BackEnd.dto.ToDoDTO;
 import com.Diplom.BackEnd.exception.MyException;
 import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
-import com.Diplom.BackEnd.model.ToDo;
 import com.Diplom.BackEnd.model.User;
+import com.Diplom.BackEnd.service.MapperToToDoDTOService;
+import com.Diplom.BackEnd.service.ToDoService;
+import com.Diplom.BackEnd.service.imp.MapperToToDoDTOServiceImpl;
 import com.Diplom.BackEnd.service.imp.ToDoServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,14 @@ import java.util.List;
 @Slf4j
 public class ToDoController {
     @Autowired
-    private ToDoServiceImpl toDoServiceImpl;
+    private ToDoService toDoService;
+    @Autowired
+    private MapperToToDoDTOService mapperToToDoDTOService;
 
     @GetMapping("author/{id}")
-    public ResponseEntity<?> getToDoes(@PathVariable(name = "id") User user){
+    public ResponseEntity<?> getToDos(@PathVariable(name = "id") Long id){
         try{
-            List<ToDoDTO> foundToDoesDTO = toDoServiceImpl.mapToToDoDTO(toDoServiceImpl.getToDoes(user));
+            List<ToDoDTO> foundToDoesDTO = mapperToToDoDTOService.mapToToDoDTO(toDoService.getToDos(id));
             return ResponseEntity.ok().body(foundToDoesDTO);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -41,7 +45,7 @@ public class ToDoController {
     @GetMapping("author/current")
     public ResponseEntity<?> getToDoesCurrentUser(@AuthenticationPrincipal User currentUsers){
         try{
-            List<ToDoDTO> foundToDoesDTO = toDoServiceImpl.mapToToDoDTO(toDoServiceImpl.getToDoes(currentUsers));
+            List<ToDoDTO> foundToDoesDTO = mapperToToDoDTOService.mapToToDoDTO(toDoService.getToDos(currentUsers.getId()));
             return ResponseEntity.ok().body(foundToDoesDTO);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -55,9 +59,9 @@ public class ToDoController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<?> createToDo(@RequestBody ToDo toDo, @AuthenticationPrincipal User currentUsers){
+    public ResponseEntity<?> createToDo(@RequestBody ToDoDTO toDoDTO, @AuthenticationPrincipal User currentUsers){
         try{
-            ToDoDTO createdToDoDTO = toDoServiceImpl.mapToToDoDTO(toDoServiceImpl.addToDo(currentUsers, toDo));
+            ToDoDTO createdToDoDTO = mapperToToDoDTOService.mapToToDoDTO(toDoService.addToDo(currentUsers.getId(), toDoDTO));
             return ResponseEntity.ok().body(createdToDoDTO);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -71,10 +75,9 @@ public class ToDoController {
     }
 
     @PostMapping("delete/{id}")
-    @PreAuthorize("#toDo.author.id == authentication.principal.id")
-    public ResponseEntity<?> deleteToDo(@PathVariable(name = "id") ToDo toDo){
+    public ResponseEntity<?> deleteToDo(@PathVariable(name = "id") Long id){
         try{
-            toDoServiceImpl.deleteToDo(toDo);
+            toDoService.deleteToDo(id);
             return ResponseEntity.ok().build();
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -88,10 +91,9 @@ public class ToDoController {
     }
 
     @PutMapping("edit/{id}")
-    @PreAuthorize("#toDo.author.id == authentication.principal.id")
-    public ResponseEntity<?> editToDo(@PathVariable(name = "id") ToDo toDo, @RequestBody ToDoDTO toDoDTO){
+    public ResponseEntity<?> editToDo(@PathVariable(name = "id") Long sourceToDoId, @RequestBody ToDoDTO toDoDTO){
         try{
-            ToDoDTO editedToDoDTO = toDoServiceImpl.mapToToDoDTO(toDoServiceImpl.editToDo(toDo, toDoDTO));
+            ToDoDTO editedToDoDTO = mapperToToDoDTOService.mapToToDoDTO(toDoService.editToDo(sourceToDoId, toDoDTO));
             return ResponseEntity.ok().body(editedToDoDTO);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();

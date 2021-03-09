@@ -13,17 +13,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class MapperUserDTOServiceImpl implements MapperToUserDTOService {
+public class MapperToUserDTOServiceImpl implements MapperToUserDTOService {
 
     @Override
     public UserDTO mapToUserDto(User user, Chairman_Slaves chairman_slaves) throws NullPointerException{
-        if(user == null){
-            throw new NullPointerExceptionImpl("user must not be null");
-        }
-        if(chairman_slaves == null){
-            throw new NullPointerExceptionImpl("chairman_slaves must not be null");
-        }
-        return new UserDTO(user,chairman_slaves.getChairman(),chairman_slaves.getSlaves());
+//        if(user == null){
+//            throw new NullPointerExceptionImpl("user must not be null");
+//        }
+//        if(chairman_slaves == null){
+//            throw new NullPointerExceptionImpl("chairman_slaves must not be null");
+//        }
+//        return new UserDTO(user);
+        return null;
 
     }
 

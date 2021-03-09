@@ -1,19 +1,17 @@
 package com.Diplom.BackEnd.service.imp;
 
-import com.Diplom.BackEnd.exception.MyException;
-import com.Diplom.BackEnd.exception.impl.*;
-import com.Diplom.BackEnd.model.Chairman_Slaves;
-import com.Diplom.BackEnd.model.ERole;
-import com.Diplom.BackEnd.model.Role;
-import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.dto.LoginDTO;
 import com.Diplom.BackEnd.dto.SignupDTO;
 import com.Diplom.BackEnd.dto.UserDTO;
+import com.Diplom.BackEnd.exception.MyException;
+import com.Diplom.BackEnd.exception.impl.*;
+import com.Diplom.BackEnd.model.ERole;
+import com.Diplom.BackEnd.model.Role;
+import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.Chairman_slavesRepo;
 import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
 import com.Diplom.BackEnd.service.AuthService;
-import com.Diplom.BackEnd.service.Chairman_slavesService;
 import com.Diplom.BackEnd.service.MapperToUserDTOService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +34,6 @@ public class AuthServiceImpl implements AuthService {
     UserRepo userRepository;
     @Autowired
     RoleRepo roleRepository;
-    @Autowired
-    Chairman_slavesRepo chairman_slavesRepo;
     @Autowired
     PasswordEncoder encoder;
     @Autowired
@@ -97,14 +93,12 @@ public class AuthServiceImpl implements AuthService {
         roles.add(userRole);
 
         // Create new user's account
-        User user = new User(
-                signUpDTO.getUsername(),
-                encoder.encode(signUpDTO.getPassword()),
-                signUpDTO.getFirstName(),
-                signUpDTO.getLastName(),
-                signUpDTO.getPatronymic(),
-                roles
-        );
+        User user = new User();
+        user.setUsername(signUpDTO.getUsername());
+        user.setPassword(encoder.encode(signUpDTO.getPassword()));
+        user.setFirstName(signUpDTO.getFirstName());
+        user.setLastName(signUpDTO.getLastName());
+        user.setRoles(roles);
         User saved_user = userRepository.save(user);
         if(saved_user == null){
             log.error("IN registerUser user: {}. return from db null:{}",user,saved_user);

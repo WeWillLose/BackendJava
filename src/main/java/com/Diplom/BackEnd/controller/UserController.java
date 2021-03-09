@@ -6,6 +6,7 @@ import com.Diplom.BackEnd.exception.MyException;
 import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
 import com.Diplom.BackEnd.model.User;
+import com.Diplom.BackEnd.service.MapperToUserDTOService;
 import com.Diplom.BackEnd.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private MapperToUserDTOService mapperToUserDTOService;
 
     @GetMapping("info/{id}")
-    public ResponseEntity<?> getUserInfo(@PathVariable(name = "id") User user){
+    public ResponseEntity<?> getUserInfo(@PathVariable(name = "id") Long id){
         try{
-            UserDTO byId = userService.getUserDtoByUserAndFindChairman_slaves(user);
+            UserDTO byId = mapperToUserDTOService.mapToUserDto(userService.findById(id));
             return ResponseEntity.ok().body(byId);
         }catch (Exception e){
             log.error("IN getUserInfo",e);
@@ -36,7 +39,7 @@ public class UserController {
     @GetMapping("info/all")
     public ResponseEntity<?> getAllUserInfo(){
         try{
-            List<UserDTO> byId = userService.getUserDtoByUserAndFindChairman_slaves(userService.getAll());
+            List<UserDTO> byId =  mapperToUserDTOService.mapToUserDto(userService.getAll());
             return ResponseEntity.ok().body(byId);
         }catch (Exception e){
             log.error("IN getAllUserInfo",e);
@@ -46,10 +49,9 @@ public class UserController {
     }
 
     @PutMapping("info/{id}")
-    @PreAuthorize("#user.id == authentication.principal.id || hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> updateUserInfo(@PathVariable(name="id") User user,@RequestBody UserDTO userDTO){
+    public ResponseEntity<?> updateUserInfo(@PathVariable(name="id") Long id,@RequestBody UserDTO userDTO){
         try{
-            UserDTO byId = userService.getUserDtoByUserAndFindChairman_slaves(userService.updateUserInfo(user,userDTO));
+            UserDTO byId = mapperToUserDTOService.mapToUserDto(userService.updateUserInfo(id,userDTO));
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -63,10 +65,9 @@ public class UserController {
     }
 
     @PutMapping("password/{id}")
-    @PreAuthorize("#user.id == authentication.principal.id || hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> resetUserPassword(@PathVariable(name="id") User user,@RequestBody PasswordResetDTO passwordDTO){
+    public ResponseEntity<?> resetUserPassword(@PathVariable(name="id") Long id,@RequestBody PasswordResetDTO passwordDTO){
         try{
-            UserDTO byId = userService.getUserDtoByUserAndFindChairman_slaves(userService.setPassword(user,passwordDTO.getPassword()));
+            UserDTO byId =  mapperToUserDTOService.mapToUserDto(userService.setPassword(id,passwordDTO.getPassword()));
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -80,9 +81,9 @@ public class UserController {
     }
     @DeleteMapping("{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> deleteUser(@PathVariable(name = "id") User user){
+    public ResponseEntity<?> deleteUser(@PathVariable(name = "id") Long id){
         try{
-            userService.delete(user);
+            userService.delete(id);
             return ResponseEntity.ok().build();
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
