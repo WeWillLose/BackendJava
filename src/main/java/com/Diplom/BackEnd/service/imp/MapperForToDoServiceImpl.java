@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class MapperToToDoDTOServiceImpl implements MapperToToDoDTOService {
+public class MapperForToDoServiceImpl implements MapperToToDoDTOService {
 
     public ToDoDTO mapToToDoDTO(ToDo toDo){
         if(toDo == null){

@@ -1,7 +1,9 @@
 package com.Diplom.BackEnd.model;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import com.vladmihalcea.hibernate.type.json.JsonNodeStringType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +32,11 @@ public class Report {
     @Column(columnDefinition = "json")
     private JsonNode data;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User author;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private EReportStatus status;
 }

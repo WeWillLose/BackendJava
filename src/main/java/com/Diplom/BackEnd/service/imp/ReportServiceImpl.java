@@ -1,10 +1,8 @@
 package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.exception.MyException;
-import com.Diplom.BackEnd.exception.impl.BadRequestImpl;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
-import com.Diplom.BackEnd.exception.impl.ReportNotFoundExceptionImpl;
-import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
+import com.Diplom.BackEnd.exception.impl.*;
+import com.Diplom.BackEnd.model.EReportStatus;
 import com.Diplom.BackEnd.model.Report;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.ReportTableRepo;
@@ -218,17 +216,30 @@ public class ReportServiceImpl {
         }
     }
 
-    public Report getReport(Long id) {
-        return reportTableRepo.findById(id).orElse(null);
-    }
-
     public Report saveReport(Report report, User author) {
         report.setAuthor(userService.findById(author.getId()));
+        report.setStatus(EReportStatus.UNCHECKED);
         return reportTableRepo.save(report);
     }
 
     public List<Report> getAll() {
         return reportTableRepo.findAll();
+    }
+
+    public List<Report> getAllByAuthorId(Long authorId) {
+        if(authorId == null){
+            throw new NullPointerExceptionImpl("authorId is null");
+        }
+        if(!userService.existsById(authorId)){
+            throw new UserNotFoundExceptionImpl();
+        }
+        return reportTableRepo.findAllByAuthorId(authorId);
+    }
+    public Report getByReportId(Long reportId) {
+        if(reportId == null){
+            throw new NullPointerExceptionImpl("reportId is null");
+        }
+        return reportTableRepo.findById(reportId).orElseThrow(ReportNotFoundExceptionImpl::new);
     }
 
 

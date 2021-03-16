@@ -27,9 +27,9 @@ public class ToDoServiceImpl implements ToDoService {
     private UserService userService;
 
     @Autowired
-    private MapperToToDoDTOServiceImpl mapperToDoDTOService;
+    private MapperForToDoServiceImpl mapperToDoDTOService;
     @Autowired
-    private MapperToToDoDTOServiceImpl mapperToToDoService;
+    private MapperForToDoServiceImpl mapperToToDoService;
 
     @Autowired
     CanEditService canEditService;

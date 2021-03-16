@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class MapperToUserDTOServiceImpl implements MapperToUserDTOService {
+public class MapperForUserServiceImpl implements MapperToUserDTOService {
 
     @Override
     public UserDTO mapToUserDto(User user, Chairman_Slaves chairman_slaves) throws NullPointerException{

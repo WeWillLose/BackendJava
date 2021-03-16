@@ -7,12 +7,9 @@ import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.service.MapperToToDoDTOService;
 import com.Diplom.BackEnd.service.ToDoService;
-import com.Diplom.BackEnd.service.imp.MapperToToDoDTOServiceImpl;
-import com.Diplom.BackEnd.service.imp.ToDoServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 

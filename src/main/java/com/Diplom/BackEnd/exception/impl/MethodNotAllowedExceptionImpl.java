@@ -1,5 +1,6 @@
-package com.Diplom.BackEnd.dto;
+package com.Diplom.BackEnd.exception.impl;
 
+import com.Diplom.BackEnd.dto.ErrorMessageDTO;
 import com.Diplom.BackEnd.exception.MyException;
 import org.springframework.http.HttpStatus;
 

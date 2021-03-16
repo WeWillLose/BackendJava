@@ -1,17 +1,14 @@
 package com.Diplom.BackEnd.controller;
 
-import com.Diplom.BackEnd.dto.MethodNotAllowedExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.MethodNotAllowedExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.BadRequestImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.convert.ConversionException;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
