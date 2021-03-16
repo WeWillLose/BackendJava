@@ -35,6 +35,8 @@ public class MapperForReportServiceImpl {
         reportDTO.setName(report.getName());
         reportDTO.setId(report.getId());
         reportDTO.setStatus(report.getStatus());
+        reportDTO.setCreatedDate(report.getCreatedDate());
+        reportDTO.setLastModifiedDate(report.getLastModifiedDate());
         return reportDTO;
     }
 }

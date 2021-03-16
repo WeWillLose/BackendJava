@@ -217,6 +217,14 @@ public class ReportServiceImpl {
     }
 
     public Report saveReport(Report report, User author) {
+        if(author.getFirstName()!=null && !author.getFirstName().isBlank() &&
+                author.getLastName()!=null && !author.getLastName().isBlank() &&
+                author.getPatronymic()!=null && !author.getPatronymic().isBlank()){
+            report.setName(String.format("report_%s_%s_%s.docx",author.getLastName(),author.getFirstName(),author.getPatronymic()));
+        }else{
+            report.setName(String.format("report_%s.docx",UUID.randomUUID().toString()));
+        }
+
         report.setAuthor(userService.findById(author.getId()));
         report.setStatus(EReportStatus.UNCHECKED);
         return reportTableRepo.save(report);

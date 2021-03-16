@@ -1,16 +1,17 @@
 package com.Diplom.BackEnd.model;
 
-import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import com.vladmihalcea.hibernate.type.json.JsonNodeStringType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
+import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +22,7 @@ import javax.persistence.*;
         typeClass = JsonStringType.class,
         defaultForType = JsonNode.class
 )
-public class Report {
+public class Report extends SuperClass<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,4 +40,14 @@ public class Report {
     @Column
     @Enumerated(EnumType.STRING)
     private EReportStatus status;
+
+    @Timestamp
+    @CreatedDate
+    @Column
+    private Date created;
+
+    @Timestamp
+    @UpdateTimestamp
+    @Column
+    private Date updated;
 }

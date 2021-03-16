@@ -18,7 +18,7 @@ import java.util.Set;
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails, Serializable {
+public class User  extends SuperClass<String>  implements UserDetails, Serializable {
 
 
     @Id
