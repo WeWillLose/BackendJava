@@ -84,7 +84,8 @@ public class ReportServiceImpl {
                     JsonNode value = data.get(group1);
                     String text = "";
                     if (value != null) {
-                        text = sb.toString().replace(group0, value.toString().replace("\"", ""));
+                        text = sb.toString().replace(group0, value.toString().replace("\"", "")
+                                .replace("\n",""));
                     } else {
                         log.warn("IN replacePlaceholders {} not found in data", group1);
                         text = sb.toString().replace(group0, "");
@@ -130,7 +131,9 @@ public class ReportServiceImpl {
                             if (colField.containsKey(cellInd)) {
                                 JsonNode value = rowData.get(colField.get(cellInd));
                                 if (value != null) {
-                                    row.getCell(cellInd).setText(value.toString().replace("\"", ""));
+                                    row.getCell(cellInd).setText(value.toString()
+                                            .replace("\"", "")
+                                            .replace("\n",""));
                                 } else {
                                     row.getCell(cellInd).setText("");
                                 }
