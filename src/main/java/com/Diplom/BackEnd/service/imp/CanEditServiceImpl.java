@@ -38,4 +38,21 @@ public class CanEditServiceImpl implements CanEditService {
         }
         return false;
     }
+
+    @Override
+    public boolean canCreate() {
+        User auth = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(auth == null){
+            throw new NullPointerExceptionImpl("IN canEdit auth is null");
+        }
+
+        if(auth.getRoles() == null) return false;
+
+        for (Role role : auth.getRoles()) {
+            if(role.getName().equals(ERole.ROLE_ADMIN)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

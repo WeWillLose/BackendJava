@@ -12,6 +12,7 @@ import com.Diplom.BackEnd.repo.Chairman_slavesRepo;
 import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
 import com.Diplom.BackEnd.service.AuthService;
+import com.Diplom.BackEnd.service.CanEditService;
 import com.Diplom.BackEnd.service.MapperToUserDTOService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,8 @@ public class AuthServiceImpl implements AuthService {
     MapperToUserDTOService mapperToUserDTOService;
     @Autowired
     ValidateUserServiceImpl validateUserService;
+    @Autowired
+    CanEditService canEditService;
 
 
     public UserDTO authenticateUser(LoginDTO loginDTO) throws MyException {
@@ -63,6 +66,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserDTO registerUser(SignupDTO signUpDTO)  throws MyException{
+        if(!canEditService.canCreate()){
+            throw new ForbiddenErrorImpl();
+        }
         log.info("IN registerUser signUpDTO: {}",signUpDTO);
         if(signUpDTO == null){
             throw new NullPointerExceptionImpl("signUpDTO must not be null");

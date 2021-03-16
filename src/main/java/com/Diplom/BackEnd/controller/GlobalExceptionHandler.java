@@ -12,6 +12,7 @@ import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,9 +32,9 @@ public class GlobalExceptionHandler {
         return new MethodNotAllowedExceptionImpl().getResponseEntity();
     }
 
-//    @ExceptionHandler(value = MissingPathVariableException.class)
-//    public ResponseEntity<?> errorHandlerConvert(HttpServletRequest req, Exception e){
-//        e.printStackTrace();
-//        return new BadRequestImpl("Ошибка в переменной пути").getResponseEntity();
-//    }
+    @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<?> errorHandlerConvert(HttpServletRequest req, Exception e){
+        e.printStackTrace();
+        return new BadRequestImpl("Ошибка в переменной пути").getResponseEntity();
+    }
 }

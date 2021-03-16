@@ -20,6 +20,7 @@ import java.util.List;
 @RequestMapping("api/user")
 @Slf4j
 public class UserController {
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -30,6 +31,10 @@ public class UserController {
         try{
             UserDTO byId = mapperToUserDTOService.mapToUserDto(userService.findById(id));
             return ResponseEntity.ok().body(byId);
+        }catch (NullPointerExceptionImpl e){
+            return new ServerErrorImpl().getResponseEntity();
+        }catch (MyException e){
+            return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN getUserInfo",e);
             e.printStackTrace();
@@ -41,6 +46,10 @@ public class UserController {
         try{
             List<UserDTO> byId =  mapperToUserDTOService.mapToUserDto(userService.getAll());
             return ResponseEntity.ok().body(byId);
+        }catch (NullPointerExceptionImpl e){
+            return new ServerErrorImpl().getResponseEntity();
+        }catch (MyException e){
+            return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN getAllUserInfo",e);
             e.printStackTrace();
