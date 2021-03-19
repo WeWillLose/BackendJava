@@ -1,5 +1,6 @@
 package com.Diplom.BackEnd.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import jdk.jfr.Timestamp;
@@ -32,6 +33,7 @@ public class Report extends SuperClass<String> {
     @Column(columnDefinition = "json")
     private JsonNode data;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User author;

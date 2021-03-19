@@ -29,7 +29,7 @@ public class ReportController {
     private ReportMapperServiceImpl mapperForReportService;
 
     @PostMapping("save")
-    public ResponseEntity saveReport(@RequestBody Report report, @AuthenticationPrincipal User user){
+    public ResponseEntity<?> saveReport(@RequestBody Report report, @AuthenticationPrincipal User user){
         return   ResponseEntity.ok(reportService.saveReport(report,user));
     }
     @GetMapping("docx/{id}")
@@ -37,7 +37,7 @@ public class ReportController {
         try{
         InputStreamResource inputStreamResource = reportService.generateReportDocx(id);
         HttpHeaders headers = new HttpHeaders();
-        String filename = "";
+
         String format = String.format("attachment; filename=%s.docx", UUID.randomUUID().toString());
         headers.add(HttpHeaders.CONTENT_DISPOSITION,format );
         return ResponseEntity.ok()

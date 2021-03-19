@@ -9,14 +9,8 @@ import com.Diplom.BackEnd.repo.ReportTableRepo;
 import com.Diplom.BackEnd.service.ReportService;
 import com.Diplom.BackEnd.service.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
-import javassist.bytecode.ByteArray;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xwpf.usermodel.*;
-import org.apache.xmlbeans.SimpleValue;
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -45,13 +39,13 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private void parsDocx(XWPFDocument docx, String pattern, JsonNode data) {
-        insertValuesInTables(docx, pattern, data);
-        replacePlaceholders(docx,pattern,data);
+        replacePlaceholdersInTables(docx, pattern, data,true);
+        replacePlaceholders(docx.getParagraphs(),pattern,data);
     }
 
-    private void replacePlaceholders(XWPFDocument docx, String pattern, JsonNode data) {
-        if (docx == null) {
-            throw new NullPointerExceptionImpl("IN replacePlaceholders docx is null");
+    private void replacePlaceholders(List<XWPFParagraph> paragraphs, String pattern, JsonNode data) {
+        if (paragraphs == null) {
+            throw new NullPointerExceptionImpl("IN replacePlaceholders paragraphs is null");
         }
         if (pattern == null || pattern.isBlank()) {
             throw new NullPointerExceptionImpl("IN replacePlaceholders pattern is blank or null");
@@ -60,7 +54,7 @@ public class ReportServiceImpl implements ReportService {
             throw new NullPointerExceptionImpl("IN replacePlaceholders data is null");
         }
         Pattern regexp = Pattern.compile(pattern);
-        for (XWPFParagraph p : docx.getParagraphs()) {
+        for (XWPFParagraph p : paragraphs) {
 
             int numberOfRuns = p.getRuns().size();
 
@@ -100,12 +94,12 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
-    private void insertValuesInTables(XWPFDocument docx, String pattern, JsonNode data) {
+    private void replacePlaceholdersInTables(XWPFDocument docx, String pattern, JsonNode data,boolean delete0Row) {
         if (docx == null) {
-            throw new NullPointerExceptionImpl("IN insertValuesInTables docx is null");
+            throw new NullPointerExceptionImpl("IN replacePlaceholdersInTables docx is null");
         }
         if (data == null) {
-            throw new NullPointerExceptionImpl("IN insertValuesInTables data is null");
+            throw new NullPointerExceptionImpl("IN replacePlaceholdersInTables data is null");
         }
         List<XWPFTable> tables = docx.getTables();
         if (tables == null || tables.isEmpty()) {
@@ -142,7 +136,10 @@ public class ReportServiceImpl implements ReportService {
                     }
 
                 }
-                table.removeRow(0);
+                if(delete0Row){
+                    table.removeRow(0);
+                }
+
             }
         }
 
