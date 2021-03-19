@@ -3,12 +3,11 @@ package com.Diplom.BackEnd.service.imp;
 import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.exception.MyException;
 import com.Diplom.BackEnd.exception.impl.BadRequestImpl;
-import com.Diplom.BackEnd.exception.impl.UserNotFoundExceptionImpl;
 import com.Diplom.BackEnd.model.Chairman_Slaves;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.Chairman_slavesRepo;
 import com.Diplom.BackEnd.service.Chairman_slavesService;
-import com.Diplom.BackEnd.service.MapperToUserDTOService;
+import com.Diplom.BackEnd.service.UserDTOMapperService;
 import com.Diplom.BackEnd.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class Chairman_slavesServiceImpl implements Chairman_slavesService {
     @Autowired
     private UserService userService;
     @Autowired
-    private MapperToUserDTOService mapperToUserDTOService;
+    private UserDTOMapperService userDTOMapperService;
 
     public Chairman_Slaves getChairman_slavesBySlave(User user) throws NullPointerException{
         if(user == null){

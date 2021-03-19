@@ -8,12 +8,12 @@ import com.Diplom.BackEnd.exception.impl.*;
 import com.Diplom.BackEnd.model.ERole;
 import com.Diplom.BackEnd.model.Role;
 import com.Diplom.BackEnd.model.User;
-import com.Diplom.BackEnd.repo.Chairman_slavesRepo;
 import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
 import com.Diplom.BackEnd.service.AuthService;
 import com.Diplom.BackEnd.service.CanEditService;
-import com.Diplom.BackEnd.service.MapperToUserDTOService;
+import com.Diplom.BackEnd.service.UserDTOMapperService;
+import com.Diplom.BackEnd.service.ValidateUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,11 +38,11 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     PasswordEncoder encoder;
     @Autowired
-    MapperToUserDTOService mapperToUserDTOService;
-    @Autowired
-    ValidateUserServiceImpl validateUserService;
+    UserDTOMapperService userDTOMapperService;
     @Autowired
     CanEditService canEditService;
+    @Autowired
+    ValidateUserService validateUserService;
 
 
     public UserDTO authenticateUser(LoginDTO loginDTO) throws MyException {
@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
             User user = (User) authentication.getPrincipal();
             log.info("IN authenticateUser user with username: {}, password : {} wos authenticated",
                     loginDTO.getUsername(), loginDTO.getPassword());
-            return mapperToUserDTOService.mapToUserDto(user);
+            return userDTOMapperService.mapToUserDto(user);
         }catch (AuthenticationException e){
             log.error("IN authenticateUser auth for user with login: {}, and password: {} failed", loginDTO.getUsername(), loginDTO.getPassword());
             throw  new UserNotFoundExceptionImpl();
@@ -85,6 +85,15 @@ public class AuthServiceImpl implements AuthService {
         if(!validateUserService.validateUserUsername(signUpDTO.getUsername())){
             throw new ValidationErrorImpl("Логин не прошел валидацию");
         }
+//        if(!validateUserService.validateUserFirstName(signUpDTO.getFirstName())){
+//            throw new ValidationErrorImpl("Имя не прошло валидацию");
+//        }
+//        if(!validateUserService.validateUserLastName(signUpDTO.getLastName())){
+//            throw new ValidationErrorImpl("Фамилия не прошла валидацию");
+//        }
+//        if(!validateUserService.validateUserPatronymic(signUpDTO.getPatronymic())){
+//            throw new ValidationErrorImpl("Отчество не прошло валидацию");
+//        }
         if (userRepository.existsByUsername(signUpDTO.getUsername())) {
             log.error("IN registerUser user with username: {} already exists",signUpDTO.getUsername());
             throw new  UserAlreadyExistsExceptionImpl();
@@ -111,6 +120,6 @@ public class AuthServiceImpl implements AuthService {
             throw new ServerErrorImpl();
         }
         log.info("IN registerUser user: {} wos created",saved_user);
-        return mapperToUserDTOService.mapToUserDto(saved_user);
+        return userDTOMapperService.mapToUserDto(saved_user);
     }
 }

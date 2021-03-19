@@ -3,6 +3,7 @@ package com.Diplom.BackEnd.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ToDo  extends SuperClass<String>  implements Serializable {
 
     @Id
@@ -24,7 +26,7 @@ public class ToDo  extends SuperClass<String>  implements Serializable {
     @Column
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User author;
 

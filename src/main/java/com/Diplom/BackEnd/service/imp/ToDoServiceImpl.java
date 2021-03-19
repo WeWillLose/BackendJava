@@ -9,6 +9,7 @@ import com.Diplom.BackEnd.model.ToDo;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.ToDoRepo;
 import com.Diplom.BackEnd.service.CanEditService;
+import com.Diplom.BackEnd.service.ToDoMapperService;
 import com.Diplom.BackEnd.service.ToDoService;
 import com.Diplom.BackEnd.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +28,7 @@ public class ToDoServiceImpl implements ToDoService {
     private UserService userService;
 
     @Autowired
-    private MapperForToDoServiceImpl mapperToDoDTOService;
-    @Autowired
-    private MapperForToDoServiceImpl mapperToToDoService;
+    private ToDoMapperService toDoMapperService;
 
     @Autowired
     CanEditService canEditService;
@@ -56,7 +55,7 @@ public class ToDoServiceImpl implements ToDoService {
 
 
     public ToDo editToDo(Long sourceToDoId,ToDoDTO changedToDoDTO){
-       return editToDo(sourceToDoId,mapperToToDoService.mapToToDo(changedToDoDTO));
+       return editToDo(sourceToDoId,toDoMapperService.mapToToDo(changedToDoDTO));
     }
 
     public ToDo editToDo(Long sourceToDoId,ToDo changedToDo){
@@ -84,7 +83,7 @@ public class ToDoServiceImpl implements ToDoService {
         return toDoRepo.save(toDo);
     }
     public ToDo addToDo(Long authorId,ToDoDTO toDo){
-        return addToDo(authorId,mapperToToDoService.mapToToDo(toDo));
+        return addToDo(authorId,toDoMapperService.mapToToDo(toDo));
     }
     public ToDo addToDo(Long authorId,ToDo toDo){
         if(toDo == null){

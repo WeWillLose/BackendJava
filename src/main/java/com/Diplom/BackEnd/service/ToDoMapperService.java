@@ -7,7 +7,7 @@ import com.Diplom.BackEnd.model.ToDo;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface MapperToToDoDTOService {
+public interface ToDoMapperService {
      ToDoDTO mapToToDoDTO(ToDo toDo);
      List<ToDoDTO> mapToToDoDTO(List<ToDo> toDos);
      ToDo mapToToDo(ToDoDTO toDoDTO);

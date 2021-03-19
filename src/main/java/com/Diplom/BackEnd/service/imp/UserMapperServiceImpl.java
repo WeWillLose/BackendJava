@@ -6,14 +6,14 @@ import com.Diplom.BackEnd.model.Chairman_Slaves;
 import com.Diplom.BackEnd.model.ERole;
 import com.Diplom.BackEnd.model.Role;
 import com.Diplom.BackEnd.model.User;
-import com.Diplom.BackEnd.service.MapperToUserDTOService;
+import com.Diplom.BackEnd.service.UserDTOMapperService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class MapperForUserServiceImpl implements MapperToUserDTOService {
+public class UserMapperServiceImpl implements UserDTOMapperService {
 
     @Override
     public UserDTO mapToUserDto(User user, Chairman_Slaves chairman_slaves) throws NullPointerException{

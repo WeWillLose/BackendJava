@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -18,9 +19,10 @@ import java.util.Set;
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class User  extends SuperClass<String>  implements UserDetails, Serializable {
 
-
+    private static final long serialVersionUID = 31275976440053607L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "user_id_generator")
     @SequenceGenerator(name = "user_id_generator",initialValue = 2,allocationSize = 5,sequenceName = "user_id_sequence")
@@ -49,6 +51,12 @@ public class User  extends SuperClass<String>  implements UserDetails, Serializa
     private Set<Role> roles;
 
 
+    @OneToMany (mappedBy="author", fetch=FetchType.LAZY,cascade = CascadeType.ALL)
+    @ToString.Exclude private Collection<Report> reports;
+
+    @OneToMany (mappedBy="author", fetch=FetchType.LAZY,cascade = CascadeType.ALL)
+    @ToString.Exclude  private Collection<ToDo> toDos;
+
     @Column(name = "is_active")
     private Boolean isActive = true;
 
@@ -74,8 +82,6 @@ public class User  extends SuperClass<String>  implements UserDetails, Serializa
         this.patronymic = patronymic;
         this.roles = roles;
     }
-
-
 
     @Transient
     @Override

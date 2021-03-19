@@ -3,7 +3,7 @@ package com.Diplom.BackEnd.service.imp;
 import com.Diplom.BackEnd.dto.ToDoDTO;
 import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.model.ToDo;
-import com.Diplom.BackEnd.service.MapperToToDoDTOService;
+import com.Diplom.BackEnd.service.ToDoMapperService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class MapperForToDoServiceImpl implements MapperToToDoDTOService {
+public class ToDoMapperServiceImpl implements ToDoMapperService {
 
     public ToDoDTO mapToToDoDTO(ToDo toDo){
         if(toDo == null){

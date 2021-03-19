@@ -1,14 +1,12 @@
 package com.Diplom.BackEnd.service.imp;
 
-import com.Diplom.BackEnd.dto.ErrorMessageDTO;
 import com.Diplom.BackEnd.dto.PasswordResetDTO;
 import com.Diplom.BackEnd.dto.UserDTO;
-import com.Diplom.BackEnd.exception.impl.BadRequestImpl;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.service.ValidateUserService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ValidateUserServiceImpl {
+public class ValidateUserServiceImpl implements ValidateUserService {
 
 
     public boolean validateUserDtoForUpdateInfo(UserDTO userDTO) {
@@ -34,6 +32,27 @@ public class ValidateUserServiceImpl {
     }
     public boolean validateUserUsername(String username){
         if(username == null || username.isBlank() || username.isBlank() || username.length() < 4){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateUserFirstName(String firstName) {
+        if(firstName == null || firstName.isBlank()){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateUserLastName(String lastName) {
+        if(lastName == null || lastName.isBlank()){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateUserPatronymic(String patronymic) {
+        if(patronymic == null || patronymic.isBlank()){
             return false;
         }
         return true;

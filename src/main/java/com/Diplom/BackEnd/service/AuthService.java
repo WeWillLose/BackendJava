@@ -7,5 +7,5 @@ import com.Diplom.BackEnd.exception.MyException;
 
 public interface AuthService {
     UserDTO authenticateUser(LoginDTO loginDTO) throws MyException;
-    UserDTO  registerUser (SignupDTO signupDTO) throws MyException;
+    UserDTO registerUser (SignupDTO signupDTO) throws MyException;
 }

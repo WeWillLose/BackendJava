@@ -8,7 +8,7 @@ import javax.persistence.Enumerated;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface MapperToUserDTOService {
+public interface UserDTOMapperService {
 
     UserDTO mapToUserDto(User user, Chairman_Slaves chairman_slaves);
 

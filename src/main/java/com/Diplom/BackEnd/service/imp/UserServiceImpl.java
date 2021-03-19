@@ -7,18 +7,15 @@ import com.Diplom.BackEnd.model.*;
 import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
 import com.Diplom.BackEnd.service.CanEditService;
-import com.Diplom.BackEnd.service.Chairman_slavesService;
-import com.Diplom.BackEnd.service.MapperToUserDTOService;
+import com.Diplom.BackEnd.service.UserDTOMapperService;
 import com.Diplom.BackEnd.service.UserService;
+import com.Diplom.BackEnd.service.ValidateUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,12 +25,12 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private RoleRepo roleRepo;
     @Autowired
-    private MapperToUserDTOService mapperToUserDTOService;
+    private UserDTOMapperService userDTOMapperService;
 
     @Autowired
     private PasswordEncoder encoder;
     @Autowired
-    private ValidateUserServiceImpl validateUserService;
+    private ValidateUserService validateUserService;
 
     @Autowired
     private CanEditService canEditService;
@@ -49,7 +46,7 @@ public class UserServiceImpl implements UserService{
         if(id == null){
             throw new NullPointerExceptionImpl("id must not be null");
         }
-        User user = userRepo.findById(id).orElseThrow(UserNotFoundExceptionImpl::new);
+        User user = userRepo.findById(id).orElse(null);
         log.info("IN findById by {} found {}",id,user);
         return user;
     }
@@ -94,7 +91,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User updateUserInfo(Long sourceUserId, UserDTO changedUserDTO) throws MyException{
-        return updateUserInfo(sourceUserId,mapperToUserDTOService.mapToUser(changedUserDTO));
+        return updateUserInfo(sourceUserId, userDTOMapperService.mapToUser(changedUserDTO));
     }
     
     @Override
@@ -103,12 +100,15 @@ public class UserServiceImpl implements UserService{
             throw new NullPointerExceptionImpl("sourceUser must not be null");
         }
         User user = this.findById(sourceUserId);
+
+        if(user == null){
+            throw new UserNotFoundExceptionImpl();
+        }
+
         if(changedUser == null){
             throw new NullPointerExceptionImpl("changedUser must not be null");
         }
-        if(!this.existsById(user.getId())){
-            throw new UserNotFoundExceptionImpl();
-        }
+
         if(!canEditService.canEdit(user)){
             throw new ForbiddenErrorImpl();
         }
@@ -116,12 +116,21 @@ public class UserServiceImpl implements UserService{
             user.setUsername(changedUser.getUsername());
         }
         if(changedUser.getFirstName() != null && !changedUser.getFirstName().isBlank()){
+            if(!validateUserService.validateUserFirstName(changedUser.getFirstName())){
+                throw new ValidationErrorImpl("Имя не прошло валидацию");
+            }
             user.setFirstName(changedUser.getFirstName());
         }
         if(changedUser.getLastName() != null && !changedUser.getLastName().isBlank()){
+            if(!validateUserService.validateUserLastName(changedUser.getLastName())){
+                throw new ValidationErrorImpl("Фамилия не прошло валидацию");
+            }
             user.setLastName(changedUser.getLastName());
         }
         if(changedUser.getPatronymic() != null && !changedUser.getPatronymic().isBlank() ){
+            if(!validateUserService.validateUserPatronymic(changedUser.getPatronymic())){
+                throw new ValidationErrorImpl("Отчество не прошло валидацию");
+            }
             user.setPatronymic(changedUser.getPatronymic());
         }
         return userRepo.save(user);
@@ -132,17 +141,15 @@ public class UserServiceImpl implements UserService{
         if(userId== null){
             throw new NullPointerExceptionImpl("user must not be null");
         }
-        User user = this.findById(userId);
+        User user = findById(userId);
+        if(user == null){
+            throw new UserNotFoundExceptionImpl();
+        }
 
         if(!validateUserService.validateUserPassword(password)){
             throw new ValidationErrorImpl("Пароль не прошел валидацию");
         }
-        if(user.getId() == null){
-            throw new ValidationErrorImpl("id должен быть не пустым");
-        }
-        if(!this.existsById(user.getId())){
-            throw new UserNotFoundExceptionImpl();
-        }
+
         if(!canEditService.canEdit(user)){
             throw new ForbiddenErrorImpl();
         }
@@ -162,9 +169,6 @@ public class UserServiceImpl implements UserService{
     public boolean existsByUsername(String username) throws NullPointerExceptionImpl {
         if(username == null){
             throw new NullPointerExceptionImpl("id must not be null");
-        }
-        if(username.isBlank()){
-            throw new ValidationErrorImpl("Логин должен быть не пустым");
         }
         return userRepo.existsByUsername(username);
     }

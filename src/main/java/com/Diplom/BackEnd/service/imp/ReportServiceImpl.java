@@ -6,6 +6,8 @@ import com.Diplom.BackEnd.model.EReportStatus;
 import com.Diplom.BackEnd.model.Report;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.ReportTableRepo;
+import com.Diplom.BackEnd.service.ReportService;
+import com.Diplom.BackEnd.service.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import javassist.bytecode.ByteArray;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +30,11 @@ import java.util.regex.Pattern;
 
 @Service
 @Slf4j
-public class ReportServiceImpl {
+public class ReportServiceImpl implements ReportService {
     @Autowired
     private ReportTableRepo reportTableRepo;
     @Autowired
-    UserServiceImpl userService;
+    UserService userService;
 
     private final String PATTERN = "\\{\\{([a-zA-z0-9]+)}}";
     @Value("${report.pathToReportTemplate}")
@@ -40,7 +42,6 @@ public class ReportServiceImpl {
 
     public String validateReportData(JsonNode data) {
         return null;
-
     }
 
     private void parsDocx(XWPFDocument docx, String pattern, JsonNode data) {
@@ -248,6 +249,14 @@ public class ReportServiceImpl {
             throw new NullPointerExceptionImpl("reportId is null");
         }
         return reportTableRepo.findById(reportId).orElseThrow(ReportNotFoundExceptionImpl::new);
+    }
+
+    public boolean existsById(Long reportId) {
+        if(reportId == null){
+            log.warn("IN existsById reportId is null");
+            return false;
+        }
+        return reportTableRepo.existsById(reportId);
     }
 
 

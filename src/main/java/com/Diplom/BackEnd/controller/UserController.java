@@ -5,8 +5,7 @@ import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.exception.MyException;
 import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
-import com.Diplom.BackEnd.model.User;
-import com.Diplom.BackEnd.service.MapperToUserDTOService;
+import com.Diplom.BackEnd.service.UserDTOMapperService;
 import com.Diplom.BackEnd.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +23,12 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
-    private MapperToUserDTOService mapperToUserDTOService;
+    private UserDTOMapperService userDTOMapperService;
 
     @GetMapping("info/{id}")
     public ResponseEntity<?> getUserInfo(@PathVariable(name = "id") Long id){
         try{
-            UserDTO byId = mapperToUserDTOService.mapToUserDto(userService.findById(id));
+            UserDTO byId = userDTOMapperService.mapToUserDto(userService.findById(id));
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -44,7 +43,7 @@ public class UserController {
     @GetMapping("info/all")
     public ResponseEntity<?> getAllUserInfo(){
         try{
-            List<UserDTO> byId =  mapperToUserDTOService.mapToUserDto(userService.getAll());
+            List<UserDTO> byId =  userDTOMapperService.mapToUserDto(userService.getAll());
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -60,7 +59,7 @@ public class UserController {
     @PutMapping("info/{id}")
     public ResponseEntity<?> updateUserInfo(@PathVariable(name="id") Long id,@RequestBody UserDTO userDTO){
         try{
-            UserDTO byId = mapperToUserDTOService.mapToUserDto(userService.updateUserInfo(id,userDTO));
+            UserDTO byId = userDTOMapperService.mapToUserDto(userService.updateUserInfo(id,userDTO));
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -76,7 +75,7 @@ public class UserController {
     @PutMapping("password/{id}")
     public ResponseEntity<?> resetUserPassword(@PathVariable(name="id") Long id,@RequestBody PasswordResetDTO passwordDTO){
         try{
-            UserDTO byId =  mapperToUserDTOService.mapToUserDto(userService.setPassword(id,passwordDTO.getPassword()));
+            UserDTO byId =  userDTOMapperService.mapToUserDto(userService.setPassword(id,passwordDTO.getPassword()));
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();

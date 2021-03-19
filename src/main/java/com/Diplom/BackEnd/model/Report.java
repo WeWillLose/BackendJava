@@ -3,9 +3,7 @@ package com.Diplom.BackEnd.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import jdk.jfr.Timestamp;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
@@ -22,6 +20,7 @@ import java.util.Date;
         typeClass = JsonStringType.class,
         defaultForType = JsonNode.class
 )
+@ToString
 public class Report extends SuperClass<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +32,7 @@ public class Report extends SuperClass<String> {
     @Column(columnDefinition = "json")
     private JsonNode data;
 
-    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User author;
 

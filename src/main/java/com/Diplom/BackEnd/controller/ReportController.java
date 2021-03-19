@@ -6,7 +6,8 @@ import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
 import com.Diplom.BackEnd.model.Report;
 import com.Diplom.BackEnd.model.User;
-import com.Diplom.BackEnd.service.imp.MapperForReportServiceImpl;
+import com.Diplom.BackEnd.service.ReportService;
+import com.Diplom.BackEnd.service.imp.ReportMapperServiceImpl;
 import com.Diplom.BackEnd.service.imp.ReportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -23,9 +24,9 @@ import java.util.UUID;
 @RequestMapping("api/report")
 public class ReportController {
     @Autowired
-    private ReportServiceImpl reportService;
+    private ReportService reportService;
     @Autowired
-    private MapperForReportServiceImpl mapperForReportService;
+    private ReportMapperServiceImpl mapperForReportService;
 
     @PostMapping("save")
     public ResponseEntity saveReport(@RequestBody Report report, @AuthenticationPrincipal User user){
@@ -56,7 +57,7 @@ public class ReportController {
     public ResponseEntity<?> getReportByCurrentUser(@AuthenticationPrincipal User user){
         try{
             List<Report> all = reportService.getAllByAuthorId(user.getId());
-            List<ReportDTO> reportDTOS = mapperForReportService.mapToReportDTO(all);
+            List<ReportDTO> reportDTOS = mapperForReportService.mapToReportDTOWithoutData(all);
             System.out.println(reportDTOS);
             return ResponseEntity.ok().body(reportDTOS);
         }catch (NullPointerExceptionImpl e){
@@ -71,7 +72,7 @@ public class ReportController {
     @GetMapping("author/{id}")
     public ResponseEntity<?> getReportByAuthor(@PathVariable Long id){
         try{
-            return ResponseEntity.ok().body(mapperForReportService.mapToReportDTO(reportService.getAllByAuthorId(id)));
+            return ResponseEntity.ok().body(mapperForReportService.mapToReportDTOWithoutData(reportService.getAllByAuthorId(id)));
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
         }catch (MyException e){
