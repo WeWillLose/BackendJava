@@ -147,7 +147,7 @@ public class ScoreListServiceImpl {
         jsonNodes.put("2",g2>8?8:g2);
         jsonNodes.put("sum1", jsonNodes.get("1").asDouble(0)+jsonNodes.get("2").asDouble(0));
         jsonNodes.put("procent1", getProcent1(jsonNodes.get("sum1").asDouble(0)));
-        jsonNodes.put("3.1", getScoreSum(reportData.get("working_program")));
+//        jsonNodes.put("3.1", getScoreSum(reportData.get("working_program")));
         jsonNodes.put("3.2.1", getScoreSum(reportData.get("class_rooms")));
         jsonNodes.put("3.2.2", getScoreSum(reportData.get("programs")));
         jsonNodes.put("3.2.3", getScoreSum(reportData.get("reconstruction")));
@@ -156,7 +156,7 @@ public class ScoreListServiceImpl {
         jsonNodes.put("3.4", getScoreSum(reportData.get("teachingaids")));
         jsonNodes.put("3.5", getScoreSum(reportData.get("education")));
         jsonNodes.put("3.6", getScoreSum(reportData.get("sdo")));
-        double g3 = jsonNodes.get("3.1").asDouble(0) + jsonNodes.get("3.2").asDouble(0) + jsonNodes.get("3.3").asDouble(0) + jsonNodes.get("3.4").asDouble(0) + jsonNodes.get("3.5").asDouble(0) + jsonNodes.get("3.6").asDouble(0);
+        double g3 = jsonNodes.get("3.2").asDouble(0) + jsonNodes.get("3.3").asDouble(0) + jsonNodes.get("3.4").asDouble(0) + jsonNodes.get("3.5").asDouble(0) + jsonNodes.get("3.6").asDouble(0);
         jsonNodes.put("3",g3>13?13:g3 );
         jsonNodes.put("4.1", getScoreSum(reportData.get("plan")));
         jsonNodes.put("4.2", getScoreSum(reportData.get("circle")));
@@ -186,6 +186,7 @@ public class ScoreListServiceImpl {
         jsonNodes.put("9.4", getScoreSum(reportData.get("interaction"),3,null));
         jsonNodes.put("9.5", getScoreSum(reportData.get("interaction"),4,null));
         jsonNodes.put("10", getScoreSum(reportData.get("subject"),1));
+        jsonNodes.put("10.1", getScoreSum(reportData.get("subject"),1));
         jsonNodes.put("11", getScoreSum(reportData.get("manual"),20));
         jsonNodes.put("sum2", jsonNodes.get("3").asDouble(0)+jsonNodes.get("4").asDouble(0)+jsonNodes.get("5").asDouble(0)
                 +jsonNodes.get("6").asDouble(0)+jsonNodes.get("7").asDouble(0)+jsonNodes.get("8").asDouble(0)+jsonNodes.get("9").asDouble(0)+jsonNodes.get("10").asDouble(0)

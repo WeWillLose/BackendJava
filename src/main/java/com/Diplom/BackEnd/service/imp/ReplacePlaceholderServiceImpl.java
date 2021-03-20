@@ -39,7 +39,7 @@ public class ReplacePlaceholderServiceImpl implements ReplacePlaceholderService 
                     sb.append(r.getText(pos));
                 }
             }
-            // Continue if there is text and contains "test"
+            // Continue if there is text
             if (sb.length() > 0) {
                 Matcher matcher = regexp.matcher(sb.toString());
                 while (matcher.find()) {
@@ -53,10 +53,13 @@ public class ReplacePlaceholderServiceImpl implements ReplacePlaceholderService 
                     String text = "";
                     if (value != null) {
                         text = sb.toString().replace(group0, value.asText());
+                        log.info("IN replacePlaceholders. {} replaced: {}",group0,value);
                     } else {
                         log.warn("IN replacePlaceholders {} not found in data", group1);
                         text = sb.toString().replace(group0, "");
+                        log.info("IN replacePlaceholders. {} replaced: ''",group0);
                     }
+
                     sb.delete(0,sb.length());
                     sb.append(text);
                     // Add new run with updated text
