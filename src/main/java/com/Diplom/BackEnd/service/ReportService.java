@@ -8,15 +8,15 @@ import org.springframework.core.io.InputStreamResource;
 import java.util.List;
 
 public interface ReportService {
-     String validateReportData(JsonNode data); 
-    
+
      InputStreamResource generateReportDocx(Long id);
 
      Report saveReport(Report report, User author); 
 
      List<Report> getAll();
 
-     List<Report> getAllByAuthorId(Long authorId); 
+     List<Report> getAllByAuthorId(Long authorId);
+
      Report getByReportId(Long reportId); 
 
      boolean existsById(Long reportId);
