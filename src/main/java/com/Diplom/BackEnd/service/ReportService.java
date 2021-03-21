@@ -14,7 +14,7 @@ public interface ReportService {
 
      InputStreamResource generateReportDocx(Long id);
 
-     Report saveReport(Report report, User author); 
+     Report saveReport(Report report, Long id);
 
      List<Report> getAll();
 

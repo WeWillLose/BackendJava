@@ -11,6 +11,7 @@ import com.Diplom.BackEnd.service.ReportMapperService;
 import com.Diplom.BackEnd.service.ReportService;
 import com.Diplom.BackEnd.service.UserMapperService;
 import com.Diplom.BackEnd.service.UserService;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -47,15 +48,24 @@ public class ReportServiceImpl implements ReportService {
         return reportDocxService.createReportDocx(report,PATTERN);
     }
 
-    public Report saveReport(Report report, User author) {
+    public Report saveReport(Report report, Long id) {
+        if(id == null){throw new NullPointerExceptionImpl("IN saveReport id is null");}
+        User author = userService.findById(id);
+        if(author == null){
+            throw new UserNotFoundExceptionImpl(id);
+        }
         if(author.getFirstName()!=null && !author.getFirstName().isBlank() &&
                 author.getLastName()!=null && !author.getLastName().isBlank() &&
                 author.getPatronymic()!=null && !author.getPatronymic().isBlank()){
             report.setName(String.format("report_%s_%s_%s.docx",author.getLastName(),author.getFirstName(),author.getPatronymic()));
+
         }else{
             report.setName(String.format("report_%s.docx",UUID.randomUUID().toString()));
         }
-
+        if(report.getData()!=null && author.getChairman() !=null){
+            ((ObjectNode)report.getData()).put("chairmanFIO", String.format("%s %.1s.%.1s.",author.getChairman().getLastName(),author.getChairman().getFirstName(),
+                    author.getChairman().getPatronymic()));
+        }
         report.setAuthor(userService.findById(author.getId()));
         report.setStatus(EReportStatus.UNCHECKED);
         return reportTableRepo.save(report);

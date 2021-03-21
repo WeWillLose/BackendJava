@@ -321,6 +321,7 @@ public class ScoreListServiceImpl {
             }
         }
         data.put("fio",reportData.get("fio").asText());
+        data.put("fioShort",reportData.get("fioShort").asText());
         data.put("quarter",reportData.get("quarter").asText());
         data.put("year2",reportData.get("year2").asText());
         replacePlaceholders(docx.getParagraphs(),REGEXP,data);

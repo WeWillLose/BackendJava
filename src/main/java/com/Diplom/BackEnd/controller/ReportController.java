@@ -32,7 +32,7 @@ public class ReportController {
 
     @PostMapping("save")
     public ResponseEntity<?> saveReport(@RequestBody Report report, @AuthenticationPrincipal User user){
-        return   ResponseEntity.ok(reportService.saveReport(report,user));
+        return   ResponseEntity.ok(reportService.saveReport(report,user.getId()));
     }
     @GetMapping("docx/{id}")
     public ResponseEntity<?> getReportDocx(@PathVariable Long id, @AuthenticationPrincipal User user){
