@@ -113,6 +113,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(encoder.encode(signUpDTO.getPassword()));
         user.setFirstName(signUpDTO.getFirstName());
         user.setLastName(signUpDTO.getLastName());
+        user.setPatronymic(signUpDTO.getPatronymic());
         user.setRoles(roles);
         User saved_user = userRepository.save(user);
         if(saved_user == null){

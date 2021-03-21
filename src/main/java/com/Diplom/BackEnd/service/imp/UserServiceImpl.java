@@ -99,6 +99,11 @@ public class UserServiceImpl implements UserService {
         if (!canEditService.canEdit(user)) {
             throw new ForbiddenErrorImpl();
         }
+//        List<User> allByChairmanId = userRepo.findAllByChairmanId(user.getId());
+//        allByChairmanId.forEach(t->{
+//            t.setChairman(null);
+//        });
+
         userRepo.delete(user);
         log.info("In delete - user wos deleted by user {}", user);
     }

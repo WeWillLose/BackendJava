@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Data
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,7 +45,7 @@ public class User  extends SuperClass<String>  implements UserDetails, Serializa
     private String patronymic;
 
 
-    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "chairman_id")
     private User chairman;
 
@@ -114,5 +113,99 @@ public class User  extends SuperClass<String>  implements UserDetails, Serializa
     @Override
     public boolean isEnabled() {
         return getIsActive();
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPatronymic() {
+        return patronymic;
+    }
+
+    public void setPatronymic(String patronymic) {
+        this.patronymic = patronymic;
+    }
+
+    public User getChairman() {
+        return chairman;
+    }
+
+    public void setChairman(User chairman) {
+        this.chairman = chairman;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public Set<Report> getReports() {
+        return reports;
+    }
+
+    public void setReports(Set<Report> reports) {
+        this.reports = reports;
+    }
+
+    public Set<ToDo> getToDos() {
+        return toDos;
+    }
+
+    public void setToDos(Set<ToDo> toDos) {
+        this.toDos = toDos;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }

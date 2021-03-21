@@ -27,6 +27,9 @@ public class ReportMapperServiceImpl implements ReportMapperService {
         if(report == null){
             return reportDTO;
         }
+        if(report.getAuthor()!=null){
+            reportDTO.setAuthor(userMapperService.mapToUserDto(report.getAuthor()));
+        }
 
         reportDTO.setData(report.getData());
         reportDTO.setName(report.getName());
@@ -47,6 +50,9 @@ public class ReportMapperServiceImpl implements ReportMapperService {
         ReportDTO reportDTO = new ReportDTO();
         if(report == null){
             return reportDTO;
+        }
+        if(report.getAuthor()!=null){
+            reportDTO.setAuthor(userMapperService.mapToUserDto(report.getAuthor()));
         }
         reportDTO.setName(report.getName());
         reportDTO.setId(report.getId());
