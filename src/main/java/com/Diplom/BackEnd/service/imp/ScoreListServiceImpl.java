@@ -320,10 +320,10 @@ public class ScoreListServiceImpl {
                 }
             }
         }
-        data.put("fio",reportData.get("fio").asText());
-        data.put("fioShort",reportData.get("fioShort").asText());
-        data.put("quarter",reportData.get("quarter").asText());
-        data.put("year2",reportData.get("year2").asText());
+        data.put("fio",reportData.get("fio")!=null?reportData.get("fio").asText():"");
+        data.put("fioShort",reportData.get("fioShort")!=null?reportData.get("fioShort").asText():"");
+        data.put("quarter",reportData.get("quarter")!=null?reportData.get("quarter").asText():"");
+        data.put("year2",reportData.get("year2")!=null?reportData.get("year2").asText():"");
         replacePlaceholders(docx.getParagraphs(),REGEXP,data);
     }
     private String IsSmth(JsonNode data){

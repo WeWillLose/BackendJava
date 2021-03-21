@@ -24,4 +24,6 @@ public interface ReportService {
 
      boolean existsById(Long reportId);
      Map<String,List<ReportDTO>> getFollowersReports(Long chairmanId);
+
+    Report updateReport(Long id, ReportDTO reportDTO);
 }

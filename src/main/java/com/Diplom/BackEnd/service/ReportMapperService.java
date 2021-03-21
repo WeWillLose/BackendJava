@@ -14,4 +14,5 @@ public interface ReportMapperService {
     List<ReportDTO> mapToReportDTOWithoutData(List<Report> reports);
 
     ReportDTO mapToReportDTOWithoutData(Report report);
+    ReportDTO mapToReport(ReportDTO report);
 }

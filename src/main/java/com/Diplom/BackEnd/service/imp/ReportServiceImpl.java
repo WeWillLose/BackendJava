@@ -106,6 +106,31 @@ public class ReportServiceImpl implements ReportService {
 
     }
 
+    @Override
+    public Report updateReport(Long id, ReportDTO reportDTO) {
+        if(id == null){
+            throw new NullPointerExceptionImpl("id is null");
+        }
+        if(reportDTO == null){
+            throw new NullPointerExceptionImpl("reportDTO is null");
+        }
+        Report report = reportTableRepo.findById(id).orElse(null);
+        if(report == null){
+            throw new ReportNotFoundExceptionImpl();
+        }
+        if(reportDTO.getName()!=null&& !reportDTO.getName().isBlank()){
+            report.setName(reportDTO.getName());
+        }
+        if(reportDTO.getData()!=null){
+            report.setData(reportDTO.getData());
+        }
+        if(reportDTO.getStatus()!=null){
+            report.setStatus(reportDTO.getStatus());
+        }
+
+        return reportTableRepo.save(report);
+    }
+
     public Report getByReportId(Long reportId) {
         if(reportId == null){
             throw new NullPointerExceptionImpl("reportId is null");

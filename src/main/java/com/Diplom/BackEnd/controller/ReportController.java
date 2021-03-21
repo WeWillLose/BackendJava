@@ -60,7 +60,6 @@ public class ReportController {
         try{
             List<Report> all = reportService.getAllByAuthorId(user.getId());
             List<ReportDTO> reportDTOS = mapperForReportService.mapToReportDTOWithoutData(all);
-            System.out.println(reportDTOS);
             return ResponseEntity.ok().body(reportDTOS);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -72,9 +71,22 @@ public class ReportController {
     }
 
     @GetMapping("chairman/followersReports/{id}")
-    public ResponseEntity<?> getReportByChairmanId(@PathVariable Long id){
+    public ResponseEntity<?> getReportByChairmanId(@PathVariable(name = "id") Long chairmanID){
         try{
-            Map<String, List<ReportDTO>> followersReports = reportService.getFollowersReports(id);
+            Map<String, List<ReportDTO>> followersReports = reportService.getFollowersReports(chairmanID);
+            return ResponseEntity.ok().body(followersReports);
+        }catch (NullPointerExceptionImpl e){
+            return new ServerErrorImpl().getResponseEntity();
+        }catch (MyException e){
+            return e.getResponseEntity();
+        }catch (Exception e){
+            return new ServerErrorImpl().getResponseEntity();
+        }
+    }
+    @GetMapping("chairman/followersReports/current")
+    public ResponseEntity<?> getReportByChairmanId(@AuthenticationPrincipal User user){
+        try{
+            Map<String, List<ReportDTO>> followersReports = reportService.getFollowersReports(user.getId());
             return ResponseEntity.ok().body(followersReports);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
@@ -97,10 +109,22 @@ public class ReportController {
             return new ServerErrorImpl().getResponseEntity();
         }
     }
-    @GetMapping("report/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getReportById(@PathVariable Long id){
         try{
             return ResponseEntity.ok().body(mapperForReportService.mapToReportDTO(reportService.getByReportId(id)));
+        }catch (NullPointerExceptionImpl e){
+            return new ServerErrorImpl().getResponseEntity();
+        }catch (MyException e){
+            return e.getResponseEntity();
+        }catch (Exception e){
+            return new ServerErrorImpl().getResponseEntity();
+        }
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateReport(@PathVariable Long id,@RequestBody ReportDTO reportDTO){
+        try{
+            return ResponseEntity.ok().body(mapperForReportService.mapToReportDTO(reportService.updateReport(id,reportDTO)));
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
         }catch (MyException e){

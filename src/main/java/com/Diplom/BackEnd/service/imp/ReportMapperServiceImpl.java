@@ -61,4 +61,9 @@ public class ReportMapperServiceImpl implements ReportMapperService {
         reportDTO.setLastModifiedDate(report.getLastModifiedDate());
         return reportDTO;
     }
+
+    @Override
+    public ReportDTO mapToReport(ReportDTO report) {
+        return null;
+    }
 }
