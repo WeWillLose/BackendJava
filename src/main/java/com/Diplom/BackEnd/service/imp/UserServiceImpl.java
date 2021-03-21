@@ -244,6 +244,9 @@ public class UserServiceImpl implements UserService {
         if (chairman == null) {
             throw new UserNotFoundExceptionImpl(chairmanId);
         }
+        if(!chairman.getRoles().contains(roleRepo.findByName(ERole.ROLE_CHAIRMAN))){
+            throw new ValidationErrorImpl("У пользователя нет роли председатель");
+        }
         follower.setChairman(chairman);
         return userRepo.save(follower);
     }
