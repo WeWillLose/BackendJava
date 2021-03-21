@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 public class NullPointerExceptionImpl extends MyException {
     public NullPointerExceptionImpl(String message) {
-        super(HttpStatus.BAD_REQUEST, new ErrorMessageDTO(message));
+        super(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorMessageDTO(message));
     }
 
 }

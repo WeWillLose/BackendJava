@@ -5,7 +5,7 @@ import com.Diplom.BackEnd.model.User;
 
 import java.util.List;
 
-public interface UserDTOMapperService {
+public interface UserMapperService {
 
 //    UserDTO mapToUserDto(User user, Chairman_Slaves chairman_slaves);
 

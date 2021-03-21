@@ -8,7 +8,7 @@ import com.Diplom.BackEnd.model.*;
 import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
 import com.Diplom.BackEnd.service.CanEditService;
-import com.Diplom.BackEnd.service.UserDTOMapperService;
+import com.Diplom.BackEnd.service.UserMapperService;
 import com.Diplom.BackEnd.service.UserService;
 import com.Diplom.BackEnd.service.ValidateUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,7 +27,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RoleRepo roleRepo;
     @Autowired
-    private UserDTOMapperService userDTOMapperService;
+    private UserMapperService userMapperService;
 
     @Autowired
     private PasswordEncoder encoder;
@@ -107,7 +106,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUserInfo(Long sourceUserId, UserDTO changedUserDTO) throws MyException {
-        return updateUserInfo(sourceUserId, userDTOMapperService.mapToUser(changedUserDTO));
+        return updateUserInfo(sourceUserId, userMapperService.mapToUser(changedUserDTO));
     }
 
     @Override

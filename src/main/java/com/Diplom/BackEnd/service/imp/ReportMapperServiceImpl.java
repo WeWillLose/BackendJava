@@ -2,7 +2,8 @@ package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.dto.ReportDTO;
 import com.Diplom.BackEnd.model.Report;
-import com.Diplom.BackEnd.service.UserDTOMapperService;
+import com.Diplom.BackEnd.service.ReportMapperService;
+import com.Diplom.BackEnd.service.UserMapperService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,9 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ReportMapperServiceImpl {
+public class ReportMapperServiceImpl implements ReportMapperService {
     @Autowired
-    UserDTOMapperService userDTOMapperService;
+    UserMapperService userMapperService;
     public List<ReportDTO> mapToReportDTO(List<Report> reports) {
         if(reports == null){
             return null;
@@ -25,9 +26,6 @@ public class ReportMapperServiceImpl {
         ReportDTO reportDTO = new ReportDTO();
         if(report == null){
             return reportDTO;
-        }
-        if(report.getAuthor()!=null){
-            reportDTO.setAuthor(userDTOMapperService.mapToUserDto(report.getAuthor()));
         }
 
         reportDTO.setData(report.getData());
@@ -49,9 +47,6 @@ public class ReportMapperServiceImpl {
         ReportDTO reportDTO = new ReportDTO();
         if(report == null){
             return reportDTO;
-        }
-        if(report.getAuthor()!=null){
-            reportDTO.setAuthor(userDTOMapperService.mapToUserDto(report.getAuthor()));
         }
         reportDTO.setName(report.getName());
         reportDTO.setId(report.getId());

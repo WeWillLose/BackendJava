@@ -31,7 +31,7 @@ public class ValidateUserServiceImpl implements ValidateUserService {
         return true;
     }
     public boolean validateUserUsername(String username){
-        if(username == null || username.isBlank() || username.isBlank() || username.length() < 4){
+        if(username == null || username.isBlank() || username.length() < 4){
             return false;
         }
         return true;

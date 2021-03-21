@@ -6,14 +6,14 @@ import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.model.ERole;
 import com.Diplom.BackEnd.model.Role;
 import com.Diplom.BackEnd.model.User;
-import com.Diplom.BackEnd.service.UserDTOMapperService;
+import com.Diplom.BackEnd.service.UserMapperService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserMapperServiceImpl implements UserDTOMapperService {
+public class UserMapperServiceImpl implements UserMapperService {
 
 
 //    @Override

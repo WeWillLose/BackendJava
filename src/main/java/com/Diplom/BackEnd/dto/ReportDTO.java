@@ -20,8 +20,6 @@ public class ReportDTO {
 
     private JsonNode data;
 
-    private UserDTO author;
-
     private EReportStatus status;
 
     private Date createdDate;

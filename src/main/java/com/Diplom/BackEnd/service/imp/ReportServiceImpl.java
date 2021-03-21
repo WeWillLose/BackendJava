@@ -1,26 +1,23 @@
 package com.Diplom.BackEnd.service.imp;
 
-import com.Diplom.BackEnd.exception.MyException;
+import com.Diplom.BackEnd.dto.ReportDTO;
+import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.exception.impl.*;
 import com.Diplom.BackEnd.model.EReportStatus;
 import com.Diplom.BackEnd.model.Report;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.ReportTableRepo;
+import com.Diplom.BackEnd.service.ReportMapperService;
 import com.Diplom.BackEnd.service.ReportService;
+import com.Diplom.BackEnd.service.UserMapperService;
 import com.Diplom.BackEnd.service.UserService;
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
 
-import java.io.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -31,6 +28,10 @@ public class ReportServiceImpl implements ReportService {
     UserService userService;
     @Autowired
     ReportDocxServiceImpl reportDocxService;
+    @Autowired
+    UserMapperService userMapperService;
+    @Autowired
+    ReportMapperService reportMapperService;
 
     private final String PATTERN = "\\{\\{([a-zA-z0-9]+)}}";
 
@@ -73,6 +74,28 @@ public class ReportServiceImpl implements ReportService {
         }
         return reportTableRepo.findAllByAuthorId(authorId);
     }
+    @Override
+    public Map<String,List<ReportDTO>> getFollowersReports(Long chairmanId) {
+        if(chairmanId == null){
+            throw new NullPointerExceptionImpl("chairmanId is null");
+        }
+        List<User> followers = userService.findFollowers(chairmanId);
+        if(followers == null){
+            throw new UserNotFoundExceptionImpl(chairmanId);
+        }
+        Map<String,List<ReportDTO>> user_reports = new HashMap<>();
+
+        followers.forEach(t->{
+            String fio = String.format("%s %.1s. %.1s.",t.getLastName()!=null?t.getLastName():"",
+                    t.getFirstName()!=null?t.getFirstName():"",
+                    t.getPatronymic()!=null?t.getPatronymic():"");
+            user_reports.put(fio,reportMapperService.mapToReportDTO(getAllByAuthorId(t.getId())));
+        });
+
+        return user_reports;
+
+    }
+
     public Report getByReportId(Long reportId) {
         if(reportId == null){
             throw new NullPointerExceptionImpl("reportId is null");

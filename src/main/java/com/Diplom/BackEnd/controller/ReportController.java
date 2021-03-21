@@ -1,6 +1,7 @@
 package com.Diplom.BackEnd.controller;
 
 import com.Diplom.BackEnd.dto.ReportDTO;
+import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.exception.MyException;
 import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
@@ -18,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -60,6 +62,20 @@ public class ReportController {
             List<ReportDTO> reportDTOS = mapperForReportService.mapToReportDTOWithoutData(all);
             System.out.println(reportDTOS);
             return ResponseEntity.ok().body(reportDTOS);
+        }catch (NullPointerExceptionImpl e){
+            return new ServerErrorImpl().getResponseEntity();
+        }catch (MyException e){
+            return e.getResponseEntity();
+        }catch (Exception e){
+            return new ServerErrorImpl().getResponseEntity();
+        }
+    }
+
+    @GetMapping("chairman/followersReports/{id}")
+    public ResponseEntity<?> getReportByChairmanId(@PathVariable Long id){
+        try{
+            Map<String, List<ReportDTO>> followersReports = reportService.getFollowersReports(id);
+            return ResponseEntity.ok().body(followersReports);
         }catch (NullPointerExceptionImpl e){
             return new ServerErrorImpl().getResponseEntity();
         }catch (MyException e){
