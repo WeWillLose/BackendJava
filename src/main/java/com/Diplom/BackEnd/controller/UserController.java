@@ -155,4 +155,19 @@ public class UserController {
             return new ServerErrorImpl().getResponseEntity();
         }
     }
+    @GetMapping("chairman/all")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> getChairmans(){
+        try{
+            return  ResponseEntity.ok().body(userMapperService.mapToUserDto(userService.findChairmans()));
+        }catch (NullPointerExceptionImpl e){
+            return new ServerErrorImpl().getResponseEntity();
+        }catch (MyException e){
+            return e.getResponseEntity();
+        }catch (Exception e){
+            log.error("IN deleteUser",e);
+            e.printStackTrace();
+            return new ServerErrorImpl().getResponseEntity();
+        }
+    }
 }

@@ -256,5 +256,10 @@ public class UserServiceImpl implements UserService {
         return setChairman(slaveId,chairmanDTO.getId());
     }
 
+    @Override
+    public List<User> findChairmans() {
+        return userRepo.findAllByRolesContains(roleRepo.findByName(ERole.ROLE_CHAIRMAN));
+    }
+
 
 }

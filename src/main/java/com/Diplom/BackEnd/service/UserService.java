@@ -24,4 +24,6 @@ public interface UserService {
     User setChairman(Long slaveId, Long chairmanId);
 
     User setChairman(Long slaveId, UserDTO chairmanDTO);
+
+    List<User> findChairmans();
 }
