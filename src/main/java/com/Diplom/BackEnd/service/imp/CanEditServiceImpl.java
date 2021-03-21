@@ -40,6 +40,22 @@ public class CanEditServiceImpl implements CanEditService {
         }
         return false;
     }
+    public boolean canEditOnlyAdmin(){
+        User auth = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(auth == null){
+            return false;
+        }
+
+        if(auth.getRoles() == null) {
+            return false;
+        }
+        for (Role role : auth.getRoles()) {
+            if(role.getName().equals(ERole.ROLE_ADMIN)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public boolean canCreate() {

@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -44,18 +46,23 @@ public class User  extends SuperClass<String>  implements UserDetails, Serializa
     private String patronymic;
 
 
+    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinColumn(name = "chairman_id")
+    private User chairman;
+
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(	name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
 
     @OneToMany (mappedBy="author", fetch=FetchType.LAZY,cascade = CascadeType.ALL)
-    @ToString.Exclude private Collection<Report> reports;
+    @ToString.Exclude private Set<Report> reports = new HashSet<>();
 
     @OneToMany (mappedBy="author", fetch=FetchType.LAZY,cascade = CascadeType.ALL)
-    @ToString.Exclude  private Collection<ToDo> toDos;
+    @ToString.Exclude  private Set<ToDo> toDos = new HashSet<>();
 
     @Column(name = "is_active")
     private Boolean isActive = true;

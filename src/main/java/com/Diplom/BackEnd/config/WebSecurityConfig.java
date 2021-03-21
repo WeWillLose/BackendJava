@@ -69,6 +69,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 
     @Bean
     public AuditorAware<String> auditorProvider() {
+        if(SecurityContextHolder.getContext().getAuthentication()==null){
+            return ()-> null;
+        }
         return () -> Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
