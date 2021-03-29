@@ -2,9 +2,11 @@ package com.Diplom.BackEnd.controller;
 
 import com.Diplom.BackEnd.exception.impl.BadRequestExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.MethodNotAllowedExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.ServerExceptionImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -45,9 +47,8 @@ public class GlobalExceptionHandler {
 //        new ValidationExceptionImpl("Handler My Exception");
 //        return e.getResponseEntity();
 //    }
-//    @ExceptionHandler(value = Exception.class)
-//    public ResponseEntity<?> errorHandlerException(HttpServletRequest req, Exception e){
-//        e.printStackTrace();
-//        return new ServerExceptionImpl().getResponseEntity();
-//    }
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    public ResponseEntity<?> errorHandlerException(HttpServletRequest req, Exception e){
+        return new BadRequestExceptionImpl().getResponseEntity();
+    }
 }
