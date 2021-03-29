@@ -8,10 +8,7 @@ import com.Diplom.BackEnd.exception.impl.*;
 import com.Diplom.BackEnd.model.*;
 import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
-import com.Diplom.BackEnd.service.CanEditService;
-import com.Diplom.BackEnd.service.UserMapperService;
-import com.Diplom.BackEnd.service.UserService;
-import com.Diplom.BackEnd.service.ValidateUserService;
+import com.Diplom.BackEnd.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +42,8 @@ public class UserServiceImpl implements UserService {
     private CanEditService canEditService;
     @Autowired
     private UserValidationService userValidationService;
+    @Autowired
+    private ChairmanService chairmanService;
 
     @Override
     public User findById(Long id) throws UserNotFoundExceptionImpl {
@@ -52,9 +51,6 @@ public class UserServiceImpl implements UserService {
             throw new NullPointerExceptionImpl("IN findById id must not be null");
         }
         User user = userRepo.findById(id).orElse(null);
-        if(user == null){
-            throw new UserNotFoundExceptionImpl(id);
-        }
         log.info("IN findById by {} found {}", id, user);
         return user;
     }
@@ -244,35 +240,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User setChairman(Long followerId, Long chairmanId) {
-        if (followerId == null) {
-            throw new NullPointerExceptionImpl("IN setChairman followerId is null");
-        }
-        if (chairmanId == null) {
-            throw new NullPointerExceptionImpl("IN setChairman chairmanId is null");
-        }
-        User follower = userRepo.findById(followerId).orElse(null);
-        if (follower == null) {
-            throw new UserNotFoundExceptionImpl(followerId);
-        }
-        User chairman = userRepo.findById(chairmanId).orElse(null);
-        if (chairman == null) {
-            throw new UserNotFoundExceptionImpl(chairmanId);
-        }
-        if(!chairman.getRoles().contains(roleRepo.findByName(ERole.ROLE_CHAIRMAN))){
-            throw new ValidationExceptionImpl("У пользователя нет роли председатель");
-        }
-        follower.setChairman(chairman);
-        return userRepo.save(follower);
+        return chairmanService.setChairman(followerId, chairmanId);
     }
 
     @Override
     public User setChairman(Long slaveId, UserDTO chairmanDTO) {
-        return setChairman(slaveId,chairmanDTO.getId());
+        return chairmanService.setChairman(slaveId,chairmanDTO.getId());
     }
 
     @Override
     public List<User> findChairmans() {
-        return userRepo.findAllByRolesContains(roleRepo.findByName(ERole.ROLE_CHAIRMAN));
+        return chairmanService.findChairmans();
     }
 
 
