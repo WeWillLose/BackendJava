@@ -4,12 +4,12 @@ import com.Diplom.BackEnd.dto.ErrorMessageDTO;
 import com.Diplom.BackEnd.exception.MyException;
 import org.springframework.http.HttpStatus;
 
-public class ServerErrorImpl extends MyException  {
-    public ServerErrorImpl() {
+public class ServerExceptionImpl extends MyException  {
+    public ServerExceptionImpl() {
         super(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorMessageDTO("Ошибка сервера"));
     }
 
-    public ServerErrorImpl(String message) {
+    public ServerExceptionImpl(String message) {
         super(HttpStatus.INTERNAL_SERVER_ERROR,new ErrorMessageDTO(message));
     }
 

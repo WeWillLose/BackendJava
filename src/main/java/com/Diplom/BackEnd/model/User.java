@@ -1,9 +1,7 @@
 package com.Diplom.BackEnd.model;
 
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,14 +11,12 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class User  extends SuperClass<String>  implements UserDetails, Serializable {
 
     private static final long serialVersionUID = 31275976440053607L;
@@ -207,5 +203,20 @@ public class User  extends SuperClass<String>  implements UserDetails, Serializa
 
     public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", patronymic='" + patronymic + '\'' +
+                ", chairman=" + (chairman==null?"null":chairman.id)+
+                ", roles=" + roles +
+                ", isActive=" + isActive +
+                '}';
     }
 }

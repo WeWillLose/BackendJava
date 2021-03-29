@@ -6,7 +6,7 @@ import com.Diplom.BackEnd.service.ValidateUserService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ValidateUserServiceImpl implements ValidateUserService {
+public class UserValidationService implements ValidateUserService {
 
 
     public boolean validateUserDtoForUpdateInfo(UserDTO userDTO) {

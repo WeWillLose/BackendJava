@@ -1,7 +1,7 @@
 package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.dto.ReportDTO;
-import com.Diplom.BackEnd.dto.UserDTO;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.*;
 import com.Diplom.BackEnd.model.EReportStatus;
 import com.Diplom.BackEnd.model.Report;

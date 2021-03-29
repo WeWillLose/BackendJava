@@ -1,8 +1,8 @@
 package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.dto.ToDoDTO;
-import com.Diplom.BackEnd.exception.impl.ForbiddenErrorImpl;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.ForbiddenExceptionImpl;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ToDoNotFoundExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.UserNotFoundExceptionImpl;
 import com.Diplom.BackEnd.model.ToDo;
@@ -41,16 +41,17 @@ public class ToDoServiceImpl implements ToDoService {
         User byId = userService.findById(authorId);
 
         if(byId == null){
-            throw new UserNotFoundExceptionImpl();
+            throw new UserNotFoundExceptionImpl(authorId);
         }
 
-        List<ToDo> byAuthor = toDoRepo.findByAuthor(byId);
-        if(byAuthor == null){
-            log.error("IN getToDos byAuthor is null");
-            throw new NullPointerException("IN getToDos byAuthor is null");
+        List<ToDo> reportsByAuthor = toDoRepo.findByAuthor(byId);
+
+        if(reportsByAuthor == null){
+            log.error("IN getToDos reportsByAuthor is null");
+            throw new NullPointerException("IN getToDos reportsByAuthor is null");
         }
-        log.info("IN getToDoes found: {} by author {}",byAuthor,byId);
-        return byAuthor;
+        log.info("IN getToDoes found: {} by author {}",reportsByAuthor,byId);
+        return reportsByAuthor;
     }
 
 
@@ -66,20 +67,28 @@ public class ToDoServiceImpl implements ToDoService {
             throw new NullPointerExceptionImpl("IN editToDo sourceToDo must not be null");
         }
 
-        ToDo toDo = toDoRepo.findById(sourceToDoId).orElseThrow(ToDoNotFoundExceptionImpl::new);
+        ToDo toDo = toDoRepo.findById(sourceToDoId).orElse(null);
+
+        if(toDo==null){
+            throw new ToDoNotFoundExceptionImpl(sourceToDoId);
+        }
 
         if(!canEditService.canEdit(toDo.getAuthor())){
-            throw new ForbiddenErrorImpl();
+            throw new ForbiddenExceptionImpl();
         }
+
         if(changedToDo.getTitle() != null && !changedToDo.getTitle().isBlank()){
             toDo.setTitle(changedToDo.getTitle());
         }
+
         if(changedToDo.getText() !=null && !changedToDo.getText().isBlank()){
             toDo.setText(changedToDo.getText());
         }
+
         if(changedToDo.getDescription() !=null && !changedToDo.getDescription().isBlank()){
             toDo.setDescription(changedToDo.getDescription());
         }
+
         return toDoRepo.save(toDo);
     }
     public ToDo addToDo(Long authorId,ToDoDTO toDo){
@@ -93,8 +102,9 @@ public class ToDoServiceImpl implements ToDoService {
             throw new NullPointerExceptionImpl("IN addToDo author.id must not be null");
         }
         User byId = userService.findById(authorId);
+
         if(byId == null){
-            throw new UserNotFoundExceptionImpl();
+            throw new UserNotFoundExceptionImpl(authorId);
         }
         toDo.setAuthor(byId);
         return  toDoRepo.save(toDo);
@@ -109,12 +119,13 @@ public class ToDoServiceImpl implements ToDoService {
 
     public void deleteToDo(Long toDoId){
 
-
-        ToDo toDo = toDoRepo.findById(toDoId).orElseThrow(ToDoNotFoundExceptionImpl::new);
-        if(!canEditService.canEdit(toDo.getAuthor())){
-            throw new ForbiddenErrorImpl();
+        ToDo toDo = toDoRepo.findById(toDoId).orElse(null);
+        if(toDo == null){
+            throw new ToDoNotFoundExceptionImpl(toDoId);
         }
-        System.out.println(toDo.getAuthor());
+        if(!canEditService.canEdit(toDo.getAuthor())){
+            throw new ForbiddenExceptionImpl();
+        }
         toDoRepo.delete(toDo);
     }
 }

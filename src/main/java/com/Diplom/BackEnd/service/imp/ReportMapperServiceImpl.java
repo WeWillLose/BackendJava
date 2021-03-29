@@ -47,10 +47,10 @@ public class ReportMapperServiceImpl implements ReportMapperService {
     }
 
     public ReportDTO mapToReportDTOWithoutData(Report report) {
-        ReportDTO reportDTO = new ReportDTO();
         if(report == null){
-            return reportDTO;
+            return null;
         }
+        ReportDTO reportDTO = new ReportDTO();
         if(report.getAuthor()!=null){
             reportDTO.setAuthor(userMapperService.mapToUserDto(report.getAuthor()));
         }
@@ -60,10 +60,5 @@ public class ReportMapperServiceImpl implements ReportMapperService {
         reportDTO.setCreatedDate(report.getCreatedDate());
         reportDTO.setLastModifiedDate(report.getLastModifiedDate());
         return reportDTO;
-    }
-
-    @Override
-    public ReportDTO mapToReport(ReportDTO report) {
-        return null;
     }
 }

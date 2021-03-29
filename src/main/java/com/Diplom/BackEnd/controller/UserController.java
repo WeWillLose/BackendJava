@@ -4,8 +4,8 @@ import com.Diplom.BackEnd.dto.PasswordResetDTO;
 import com.Diplom.BackEnd.dto.RoleDTO;
 import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.exception.MyException;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
-import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.ServerExceptionImpl;
 import com.Diplom.BackEnd.service.UserMapperService;
 import com.Diplom.BackEnd.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,28 +33,28 @@ public class UserController {
             UserDTO byId = userMapperService.mapToUserDto(userService.findById(id));
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN getUserInfo",e);
             e.printStackTrace();
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
     @GetMapping("info/all")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_CHAIRMAN')")
     public ResponseEntity<?> getAllUserInfo(){
         try{
-            List<UserDTO> byId =  userMapperService.mapToUserDto(userService.getAll());
-            return ResponseEntity.ok().body(byId);
+            return ResponseEntity.ok().body(userMapperService.mapToUserDto(userService.findAll()));
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN getAllUserInfo",e);
             e.printStackTrace();
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
 
@@ -64,13 +64,13 @@ public class UserController {
             UserDTO byId = userMapperService.mapToUserDto(userService.updateUserInfo(id,userDTO));
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN updateUserInfo",e);
             e.printStackTrace();
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
 
@@ -80,13 +80,13 @@ public class UserController {
             UserDTO byId = userMapperService.mapToUserDto(userService.setChairman(followerId,chairmanDTO));
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN updateUserInfo",e);
             e.printStackTrace();
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
 
@@ -97,13 +97,13 @@ public class UserController {
             List<UserDTO> followers = userMapperService.mapToUserDto(userService.findFollowers(id));
             return ResponseEntity.ok().body(followers);
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN updateUserInfo",e);
             e.printStackTrace();
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
 
@@ -113,13 +113,13 @@ public class UserController {
             UserDTO byId =  userMapperService.mapToUserDto(userService.setPassword(id,passwordDTO.getPassword()));
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN updateUser",e);
             e.printStackTrace();
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
     @PutMapping("roles/{id}")
@@ -129,13 +129,13 @@ public class UserController {
             UserDTO byId =  userMapperService.mapToUserDto(userService.setRoles(id,roles));
             return ResponseEntity.ok().body(byId);
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN updateUser",e);
             e.printStackTrace();
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
 
@@ -146,13 +146,13 @@ public class UserController {
             userService.delete(id);
             return ResponseEntity.ok().build();
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN deleteUser",e);
             e.printStackTrace();
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
     @GetMapping("chairman/all")
@@ -161,13 +161,13 @@ public class UserController {
         try{
             return  ResponseEntity.ok().body(userMapperService.mapToUserDto(userService.findChairmans()));
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
             log.error("IN deleteUser",e);
             e.printStackTrace();
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
 }

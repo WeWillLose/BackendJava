@@ -5,6 +5,6 @@ import com.Diplom.BackEnd.model.User;
 
 public interface CanEditService {
     boolean canEdit(User owner);
-    boolean canCreate();
-    boolean canEditOnlyAdmin();
+    boolean canCreate(User user);
+    boolean canEditOnlyAdmin(User user);
 }

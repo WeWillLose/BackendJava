@@ -8,7 +8,7 @@ import com.Diplom.BackEnd.model.User;
 import java.util.List;
 
 public interface UserService {
-    List<User> getAll() throws MyException;
+    List<User> findAll() throws MyException;
     User findById(Long id) throws MyException;
     User findByUsername(String username) throws MyException;
     void delete(Long id) throws MyException;

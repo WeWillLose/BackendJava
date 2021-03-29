@@ -2,8 +2,8 @@ package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.dto.LoginDTO;
 import com.Diplom.BackEnd.dto.SignupDTO;
-import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.exception.MyException;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.*;
 import com.Diplom.BackEnd.model.ERole;
 import com.Diplom.BackEnd.model.Role;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,8 +45,8 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     ValidateUserService validateUserService;
 
-
-    public UserDTO authenticateUser(LoginDTO loginDTO) throws MyException {
+    @Override
+    public User authenticateUser(LoginDTO loginDTO) throws MyException {
         if(loginDTO == null){
             throw new NullPointerExceptionImpl("loginDTO must not be null");
         }
@@ -56,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
             User user = (User) authentication.getPrincipal();
             log.info("IN authenticateUser user with username: {}, password : {} wos authenticated",
                     loginDTO.getUsername(), loginDTO.getPassword());
-            return userMapperService.mapToUserDto(user);
+            return user;
         }catch (AuthenticationException e){
             log.error("IN authenticateUser auth for user with login: {}, and password: {} failed", loginDTO.getUsername(), loginDTO.getPassword());
             throw  new UserNotFoundExceptionImpl();
@@ -65,45 +66,39 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserDTO registerUser(SignupDTO signUpDTO)  throws MyException{
-        if(!canEditService.canCreate()){
-            throw new ForbiddenErrorImpl();
+    public User registerUser(SignupDTO signUpDTO)  throws MyException{
+        if(!canEditService.canCreate((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())){
+            throw new ForbiddenExceptionImpl();
         }
         log.info("IN registerUser signUpDTO: {}",signUpDTO);
+
         if(signUpDTO == null){
             throw new NullPointerExceptionImpl("signUpDTO must not be null");
         }
-        if(signUpDTO.getUsername() == null){
-            throw new ValidationErrorImpl("Логин должен быть не пустым");
-        }
-        if(signUpDTO.getPassword() == null){
-            throw new ValidationErrorImpl("Пароль должен быть не пустым");
-        }
         if(!validateUserService.validateUserPassword(signUpDTO.getPassword())){
-            throw new ValidationErrorImpl("Пароль не прошел валидацию");
+            throw new ValidationExceptionImpl("Пароль не прошел валидацию");
         }
         if(!validateUserService.validateUserUsername(signUpDTO.getUsername())){
-            throw new ValidationErrorImpl("Логин не прошел валидацию");
+            throw new ValidationExceptionImpl("Логин не прошел валидацию");
         }
         if(!validateUserService.validateUserFirstName(signUpDTO.getFirstName())){
-            throw new ValidationErrorImpl("Имя не прошло валидацию");
+            throw new ValidationExceptionImpl("Имя не прошло валидацию");
         }
         if(!validateUserService.validateUserLastName(signUpDTO.getLastName())){
-            throw new ValidationErrorImpl("Фамилия не прошла валидацию");
+            throw new ValidationExceptionImpl("Фамилия не прошла валидацию");
         }
         if(!validateUserService.validateUserPatronymic(signUpDTO.getPatronymic())){
-            throw new ValidationErrorImpl("Отчество не прошло валидацию");
+            throw new ValidationExceptionImpl("Отчество не прошло валидацию");
         }
         if (userRepository.existsByUsername(signUpDTO.getUsername())) {
             log.error("IN registerUser user with username: {} already exists",signUpDTO.getUsername());
             throw new  UserAlreadyExistsExceptionImpl();
-
         }
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName(ERole.ROLE_TEACHER);
         if (userRole == null){
             log.error("IN registerUser role {} not found",ERole.ROLE_TEACHER);
-            throw new ServerErrorImpl();
+            throw new NullPointerExceptionImpl("IN registerUser userRole is null");
         }
         roles.add(userRole);
 
@@ -118,9 +113,9 @@ public class AuthServiceImpl implements AuthService {
         User saved_user = userRepository.save(user);
         if(saved_user == null){
             log.error("IN registerUser user: {}. return from db null:{}",user,saved_user);
-            throw new ServerErrorImpl();
+            throw new NullPointerExceptionImpl("IN registerUser saved_user from db is null");
         }
         log.info("IN registerUser user: {} wos created",saved_user);
-        return userMapperService.mapToUserDto(saved_user);
+        return saved_user;
     }
 }

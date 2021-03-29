@@ -4,8 +4,9 @@ import com.Diplom.BackEnd.dto.LoginDTO;
 import com.Diplom.BackEnd.dto.SignupDTO;
 import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.exception.MyException;
+import com.Diplom.BackEnd.model.User;
 
 public interface AuthService {
-    UserDTO authenticateUser(LoginDTO loginDTO) throws MyException;
-    UserDTO registerUser (SignupDTO signupDTO) throws MyException;
+    User authenticateUser(LoginDTO loginDTO) throws MyException;
+    User registerUser (SignupDTO signupDTO) throws MyException;
 }

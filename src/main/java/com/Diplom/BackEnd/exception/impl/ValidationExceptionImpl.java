@@ -4,11 +4,11 @@ import com.Diplom.BackEnd.dto.ErrorMessageDTO;
 import com.Diplom.BackEnd.exception.MyException;
 import org.springframework.http.HttpStatus;
 
-public class ValidationErrorImpl extends MyException {
-    public ValidationErrorImpl( String message) {
+public class ValidationExceptionImpl extends MyException {
+    public ValidationExceptionImpl(String message) {
         super(HttpStatus.BAD_REQUEST, new ErrorMessageDTO(message));
     }
-    public ValidationErrorImpl() {
+    public ValidationExceptionImpl() {
         super(HttpStatus.BAD_REQUEST, new ErrorMessageDTO("Данные не валидны"));
     }
 }

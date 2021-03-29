@@ -12,7 +12,7 @@ public class UserNotFoundExceptionImpl extends MyException {
     }
 
     public UserNotFoundExceptionImpl() {
-        super(HttpStatus.NOT_FOUND, new ErrorMessageDTO("Пользователь с такими данными не найден"));
+        super(HttpStatus.NOT_FOUND, new ErrorMessageDTO("Пользователь не найден"));
     }
     public UserNotFoundExceptionImpl(Long id) {
         super(HttpStatus.NOT_FOUND, new ErrorMessageDTO(String.format("Пользователь с id: %s не найден",id)));

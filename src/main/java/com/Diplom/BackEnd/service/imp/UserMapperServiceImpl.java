@@ -2,29 +2,26 @@ package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.dto.RoleDTO;
 import com.Diplom.BackEnd.dto.UserDTO;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.model.ERole;
 import com.Diplom.BackEnd.model.Role;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.service.UserMapperService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserMapperServiceImpl implements UserMapperService {
-
-
-//    @Override
-//    public UserDTO mapToUserDto(User user, Chairman_Slaves chairman_slaves) {
-//        return null;
-//    }
 
     @Override
     public UserDTO mapToUserDto(User user) throws NullPointerException{
         if(user == null){
-            return new UserDTO();
+            log.info("IN mapToUserDto user is null");
+            return null;
         }
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername(user.getUsername());
@@ -33,7 +30,7 @@ public class UserMapperServiceImpl implements UserMapperService {
         userDTO.setLastName(user.getLastName());
         userDTO.setPatronymic(user.getPatronymic());
         if(user.getRoles()!=null){
-            userDTO.setRoles(user.getRoles().stream().map(role->{return new RoleDTO(role.getName());}).collect(Collectors.toSet()));
+            userDTO.setRoles(user.getRoles().stream().map(role-> new RoleDTO(role.getName())).collect(Collectors.toSet()));
         }
         if(user.getChairman()!=null){
             UserDTO chairman = new UserDTO();
@@ -44,13 +41,14 @@ public class UserMapperServiceImpl implements UserMapperService {
             chairman.setId(user.getChairman().getId());
             userDTO.setChairman(chairman);
         }
+        log.info("IN mapToUserDto mapped {} into {}",user,userDTO);
         return userDTO;
     }
 
     @Override
     public List<UserDTO> mapToUserDto(List<User> user) {
         if(user == null){
-            throw new NullPointerExceptionImpl("user must not be null");
+            return null;
         }
         return user.stream().map(this::mapToUserDto).collect(Collectors.toList());
     }
@@ -58,7 +56,8 @@ public class UserMapperServiceImpl implements UserMapperService {
     @Override
     public User mapToUser(UserDTO userDTO) {
         if(userDTO == null){
-            return new User();
+            log.info("IN mapToUser userDTO is null");
+            return null;
         }
         User user = new User();
         user.setUsername(userDTO.getUsername());
@@ -66,11 +65,9 @@ public class UserMapperServiceImpl implements UserMapperService {
         user.setLastName(userDTO.getLastName());
         user.setPatronymic(userDTO.getPatronymic());
         if(userDTO.getRoles()!=null){
-            user.setRoles(userDTO.getRoles().stream().map(t->{
-                return new Role(ERole.valueOf(t.getName()));
-            }).collect(Collectors.toSet()));
+            user.setRoles(userDTO.getRoles().stream().map(t-> new Role(ERole.valueOf(t.getName()))).collect(Collectors.toSet()));
         }
-
+        log.info("IN mapToUser mapped {} into {}",userDTO,user);
         return user;
     }
 }

@@ -9,6 +9,10 @@ public class ToDoNotFoundExceptionImpl extends MyException {
         super(HttpStatus.NOT_FOUND, new ErrorMessageDTO(message));
     }
     public ToDoNotFoundExceptionImpl() {
-        super(HttpStatus.NOT_FOUND, new ErrorMessageDTO("Данные не валидны"));
+        super(HttpStatus.NOT_FOUND, new ErrorMessageDTO("Заметка не найдена"));
+    }
+
+    public ToDoNotFoundExceptionImpl(Long id) {
+        super(HttpStatus.NOT_FOUND, new ErrorMessageDTO(String.format("Заметка с id - %d не найдена",id)));
     }
 }

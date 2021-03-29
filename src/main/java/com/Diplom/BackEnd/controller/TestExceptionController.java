@@ -1,8 +1,7 @@
 package com.Diplom.BackEnd.controller;
 
-import com.Diplom.BackEnd.exception.MyException;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
-import com.Diplom.BackEnd.exception.impl.ValidationErrorImpl;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.ValidationExceptionImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +21,7 @@ public class TestExceptionController {
     }
     @GetMapping("my")
     public ResponseEntity<?> MyException(){
-        throw new ValidationErrorImpl("my  exception");
+        throw new ValidationExceptionImpl("my  exception");
     }
     @GetMapping("notsupp")
     public ResponseEntity<?> NotSupported() throws HttpRequestMethodNotSupportedException {

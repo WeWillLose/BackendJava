@@ -1,15 +1,12 @@
 package com.Diplom.BackEnd.service.imp;
 
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.model.ERole;
 import com.Diplom.BackEnd.model.Role;
-import com.Diplom.BackEnd.model.ToDo;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.service.CanEditService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.Transient;
 
 @Service
 public class CanEditServiceImpl implements CanEditService {
@@ -40,16 +37,16 @@ public class CanEditServiceImpl implements CanEditService {
         }
         return false;
     }
-    public boolean canEditOnlyAdmin(){
-        User auth = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(auth == null){
+
+    public boolean canEditOnlyAdmin( User user){
+        if(user == null){
             return false;
         }
 
-        if(auth.getRoles() == null) {
+        if(user.getRoles() == null) {
             return false;
         }
-        for (Role role : auth.getRoles()) {
+        for (Role role : user.getRoles()) {
             if(role.getName().equals(ERole.ROLE_ADMIN)){
                 return true;
             }
@@ -58,17 +55,16 @@ public class CanEditServiceImpl implements CanEditService {
     }
 
     @Override
-    public boolean canCreate() {
-        User auth = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(auth == null){
+    public boolean canCreate(User user) {
+        if(user == null){
             return false;
         }
 
-        if(auth.getRoles() == null) {
+        if(user.getRoles() == null) {
             return false;
         }
 
-        for (Role role : auth.getRoles()) {
+        for (Role role : user.getRoles()) {
             if(role.getName().equals(ERole.ROLE_ADMIN)){
                 return true;
             }

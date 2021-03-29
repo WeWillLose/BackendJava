@@ -3,6 +3,7 @@ package com.Diplom.BackEnd.service.imp;
 import com.Diplom.BackEnd.dto.RoleDTO;
 import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.exception.MyException;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.*;
 import com.Diplom.BackEnd.model.*;
 import com.Diplom.BackEnd.repo.RoleRepo;
@@ -12,7 +13,10 @@ import com.Diplom.BackEnd.service.UserMapperService;
 import com.Diplom.BackEnd.service.UserService;
 import com.Diplom.BackEnd.service.ValidateUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,21 +28,39 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepo userRepo;
+
     @Autowired
     private RoleRepo roleRepo;
+
     @Autowired
     private UserMapperService userMapperService;
 
     @Autowired
     private PasswordEncoder encoder;
+
     @Autowired
     private ValidateUserService validateUserService;
 
     @Autowired
     private CanEditService canEditService;
+    @Autowired
+    private UserValidationService userValidationService;
 
     @Override
-    public List<User> getAll() throws MyException {
+    public User findById(Long id) throws UserNotFoundExceptionImpl {
+        if (id == null) {
+            throw new NullPointerExceptionImpl("IN findById id must not be null");
+        }
+        User user = userRepo.findById(id).orElse(null);
+        if(user == null){
+            throw new UserNotFoundExceptionImpl(id);
+        }
+        log.info("IN findById by {} found {}", id, user);
+        return user;
+    }
+
+    @Override
+    public List<User> findAll() throws MyException {
         List<User> users = userRepo.findAllByRolesNotContains(roleRepo.findByName(ERole.ROLE_ADMIN));
         return users;
     }
@@ -56,15 +78,7 @@ public class UserServiceImpl implements UserService {
         return followers;
     }
 
-    @Override
-    public User findById(Long id) throws MyException {
-        if (id == null) {
-            throw new NullPointerExceptionImpl("id must not be null");
-        }
-        User user = userRepo.findById(id).orElse(null);
-        log.info("IN findById by {} found {}", id, user);
-        return user;
-    }
+
 
     @Override
     public User findByUsername(String username) throws MyException {
@@ -72,7 +86,7 @@ public class UserServiceImpl implements UserService {
             throw new NullPointerExceptionImpl("username myst not be null or empty");
         }
         if (username.isBlank()) {
-            throw new ValidationErrorImpl("Логин должен быть не пустой");
+            throw new ValidationExceptionImpl("Логин должен быть не пустой");
         }
         User user = userRepo.findByUsername(username);
         if (user == null) {
@@ -88,21 +102,17 @@ public class UserServiceImpl implements UserService {
         }
         User user = this.findById(id);
         if (user.getRoles().contains(new Role(ERole.ROLE_ADMIN))) {
-            throw new BadRequestImpl("Админа нельзя удалить");
+            throw new ValidationExceptionImpl("Админа нельзя удалить");
         }
         if (user.getId() == null) {
-            throw new ValidationErrorImpl("id должен быть не пустым");
+            throw new ValidationExceptionImpl("id должен быть не пустым");
         }
         if (!this.existsById(user.getId())) {
-            throw new UserNotFoundExceptionImpl();
+            throw new UserNotFoundExceptionImpl(user.getId());
         }
         if (!canEditService.canEdit(user)) {
-            throw new ForbiddenErrorImpl();
+            throw new ForbiddenExceptionImpl();
         }
-//        List<User> allByChairmanId = userRepo.findAllByChairmanId(user.getId());
-//        allByChairmanId.forEach(t->{
-//            t.setChairman(null);
-//        });
 
         userRepo.delete(user);
         log.info("In delete - user wos deleted by user {}", user);
@@ -122,7 +132,7 @@ public class UserServiceImpl implements UserService {
         User user = this.findById(sourceUserId);
 
         if (user == null) {
-            throw new UserNotFoundExceptionImpl();
+            throw new UserNotFoundExceptionImpl(sourceUserId);
         }
 
         if (changedUser == null) {
@@ -130,26 +140,29 @@ public class UserServiceImpl implements UserService {
         }
 
         if (!canEditService.canEdit(user)) {
-            throw new ForbiddenErrorImpl();
+            throw new ForbiddenExceptionImpl();
         }
         if (changedUser.getUsername() != null && !changedUser.getUsername().isBlank()) {
+            if(!userValidationService.validateUserUsername(changedUser.getUsername())){
+                throw new ValidationExceptionImpl("username не прошел валидацию");
+            }
             user.setUsername(changedUser.getUsername());
         }
         if (changedUser.getFirstName() != null && !changedUser.getFirstName().isBlank()) {
             if (!validateUserService.validateUserFirstName(changedUser.getFirstName())) {
-                throw new ValidationErrorImpl("Имя не прошло валидацию");
+                throw new ValidationExceptionImpl("Имя не прошло валидацию");
             }
             user.setFirstName(changedUser.getFirstName());
         }
         if (changedUser.getLastName() != null && !changedUser.getLastName().isBlank()) {
             if (!validateUserService.validateUserLastName(changedUser.getLastName())) {
-                throw new ValidationErrorImpl("Фамилия не прошло валидацию");
+                throw new ValidationExceptionImpl("Фамилия не прошло валидацию");
             }
             user.setLastName(changedUser.getLastName());
         }
         if (changedUser.getPatronymic() != null && !changedUser.getPatronymic().isBlank()) {
             if (!validateUserService.validateUserPatronymic(changedUser.getPatronymic())) {
-                throw new ValidationErrorImpl("Отчество не прошло валидацию");
+                throw new ValidationExceptionImpl("Отчество не прошло валидацию");
             }
             user.setPatronymic(changedUser.getPatronymic());
         }
@@ -163,15 +176,15 @@ public class UserServiceImpl implements UserService {
         }
         User user = findById(userId);
         if (user == null) {
-            throw new UserNotFoundExceptionImpl();
+            throw new UserNotFoundExceptionImpl(userId);
         }
 
         if (!validateUserService.validateUserPassword(password)) {
-            throw new ValidationErrorImpl("Пароль не прошел валидацию");
+            throw new ValidationExceptionImpl("Пароль не прошел валидацию");
         }
 
         if (!canEditService.canEdit(user)) {
-            throw new ForbiddenErrorImpl();
+            throw new ForbiddenExceptionImpl();
         }
         user.setPassword(encoder.encode(password));
         return userRepo.save(user);
@@ -188,7 +201,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByUsername(String username) throws NullPointerExceptionImpl {
         if (username == null) {
-            throw new NullPointerExceptionImpl("id must not be null");
+            throw new NullPointerExceptionImpl("username must not be null");
         }
         return userRepo.existsByUsername(username);
     }
@@ -197,21 +210,22 @@ public class UserServiceImpl implements UserService {
     public User setRoles(Long id, List<RoleDTO> roles) {
 
         User user = findById(id);
+
         if (user == null) {
-            throw new UserNotFoundExceptionImpl();
+            throw new UserNotFoundExceptionImpl(id);
         }
         if (roles == null) {
-            return user;
+            throw new NullPointerExceptionImpl("roles is null");
         }
-        if (!canEditService.canEditOnlyAdmin()) {
-            throw new ForbiddenErrorImpl();
+        if (!canEditService.canEditOnlyAdmin((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())) {
+            throw new ForbiddenExceptionImpl();
         }
         if (roles.contains(new RoleDTO(ERole.ROLE_ADMIN))) {
-            throw new ValidationErrorImpl("Нельзя назначать админа");
+            throw new ValidationExceptionImpl("Нельзя назначать админа");
         }
         for (Role role : user.getRoles()) {
             if (role.getName().equals(ERole.ROLE_ADMIN)) {
-                throw new ValidationErrorImpl("Нельзя изменять роли админа");
+                throw new ValidationExceptionImpl("Нельзя изменять роли админа");
             }
         }
         HashSet<Role> user_roles = new HashSet<>();
@@ -219,7 +233,7 @@ public class UserServiceImpl implements UserService {
                     try {
                         user_roles.add(roleRepo.findByName(ERole.valueOf(t.getName())));
                     } catch (IllegalArgumentException e) {
-                        throw new BadRequestImpl(String.format("Роль - %s не существует", t.getName()));
+                        throw new BadRequestExceptionImpl(String.format("Роль - %s не существует", t.getName()));
                     }
 
                 }
@@ -245,7 +259,7 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundExceptionImpl(chairmanId);
         }
         if(!chairman.getRoles().contains(roleRepo.findByName(ERole.ROLE_CHAIRMAN))){
-            throw new ValidationErrorImpl("У пользователя нет роли председатель");
+            throw new ValidationExceptionImpl("У пользователя нет роли председатель");
         }
         follower.setChairman(chairman);
         return userRepo.save(follower);
@@ -253,9 +267,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User setChairman(Long slaveId, UserDTO chairmanDTO) {
-        if(chairmanDTO == null){
-            throw new NullPointerExceptionImpl("IN setChairman chairmanDTO is null");
-        }
         return setChairman(slaveId,chairmanDTO.getId());
     }
 

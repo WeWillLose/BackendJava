@@ -1,7 +1,7 @@
 package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.dto.ToDoDTO;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.model.ToDo;
 import com.Diplom.BackEnd.service.ToDoMapperService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,8 @@ public class ToDoMapperServiceImpl implements ToDoMapperService {
 
     public ToDoDTO mapToToDoDTO(ToDo toDo){
         if(toDo == null){
-            log.error("In mapToToDoDTO toDo must not be null");
-            throw new NullPointerExceptionImpl("In mapToToDoDTO toDo must not be null");
+            log.error("In mapToToDoDTO toDo is null");
+            return null;
         }
         ToDoDTO toDoDTO = new ToDoDTO(toDo.getId(), toDo.getTitle(), toDo.getDescription(), toDo.getText());
         log.info("IN mapToToDoDTO toDoDTO: {}, mapped to toDo: {}",toDo,toDoDTO);
@@ -32,8 +32,8 @@ public class ToDoMapperServiceImpl implements ToDoMapperService {
     }
     public ToDo mapToToDo(ToDoDTO toDoDTO){
         if(toDoDTO == null){
-            log.error("In mapToToDoDTO toDoDTO must not be null");
-            throw new NullPointerExceptionImpl("In mapToToDoDTO toDoDTO must not be null");
+            log.error("In mapToToDoDTO toDoDTO is null");
+            return null;
         }
         ToDo toDo = new ToDo(toDoDTO.getId(), toDoDTO.getTitle(), toDoDTO.getDescription(), toDoDTO.getText());
         log.info("IN mapToToDoDTO toDoDTO: {}, mapped to toDo: {}",toDoDTO,toDo);
@@ -42,8 +42,8 @@ public class ToDoMapperServiceImpl implements ToDoMapperService {
 
     public List<ToDo> mapToToDo(List<ToDoDTO> toDosDTO){
         if(toDosDTO == null){
-            log.error("In mapToToDo toDosDTO must not be null");
-            throw new NullPointerExceptionImpl("In mapToToDo toDosDTO must not be null");
+            log.error("In mapToToDo toDosDTOis null");
+            return null;
         }
         return toDosDTO.stream().map(this::mapToToDo).collect(Collectors.toList());
     }

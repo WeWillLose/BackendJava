@@ -1,8 +1,8 @@
 package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.exception.MyException;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
-import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.ServerExceptionImpl;
 import com.Diplom.BackEnd.model.Report;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
@@ -194,13 +194,13 @@ public class ReportDocxServiceImpl {
             return getInputStream(docx);
         } catch (NullPointerExceptionImpl e) {
             e.printStackTrace();
-            throw new ServerErrorImpl();
+            throw new ServerExceptionImpl();
         } catch (MyException e) {
             e.printStackTrace();
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServerErrorImpl();
+            throw new ServerExceptionImpl();
         }
     }
 }

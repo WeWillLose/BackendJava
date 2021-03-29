@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 public class UserAlreadyExistsExceptionImpl extends MyException {
     public UserAlreadyExistsExceptionImpl() {
-        super(HttpStatus.CONFLICT, new ErrorMessageDTO("Пользователь с таким логином уже существует"));
+        super(HttpStatus.CONFLICT, new ErrorMessageDTO("Пользователь уже существует"));
     }
 
     public UserAlreadyExistsExceptionImpl(String message) {

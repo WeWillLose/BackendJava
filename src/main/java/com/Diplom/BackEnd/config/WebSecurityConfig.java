@@ -1,7 +1,7 @@
 package com.Diplom.BackEnd.config;
 
-import com.Diplom.BackEnd.exception.impl.AccessDeniedExceptionHandler;
-import com.Diplom.BackEnd.service.imp.UserDetailsServiceImpl;
+import com.Diplom.BackEnd.exception.AccessDeniedExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.ForbiddenExceptionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -19,8 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Optional;
 
@@ -30,6 +28,7 @@ import java.util.Optional;
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
     @Qualifier("userDetailsServiceImpl")
+
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -53,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .authorizeRequests().antMatchers("/auth/**","/api/report/docx/**").permitAll()
+                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .rememberMe()
@@ -64,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
     @Bean
     public AccessDeniedHandler accessDeniedHandler()
     {
-        return new AccessDeniedExceptionHandler();
+        return new AccessDeniedExceptionImpl();
     }
 
     @Bean

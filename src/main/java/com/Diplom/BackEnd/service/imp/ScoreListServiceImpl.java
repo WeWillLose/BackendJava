@@ -1,10 +1,10 @@
 package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.exception.MyException;
-import com.Diplom.BackEnd.exception.impl.BadRequestImpl;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.BadRequestExceptionImpl;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ReportNotFoundExceptionImpl;
-import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
+import com.Diplom.BackEnd.exception.impl.ServerExceptionImpl;
 import com.Diplom.BackEnd.model.Report;
 import com.Diplom.BackEnd.service.ReportService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -152,7 +152,7 @@ public class ScoreListServiceImpl {
                 JsonNode rowsData = data.get(tableName);
                 if (rowsData != null) {
                     if (!rowsData.isArray()) {
-                        throw new BadRequestImpl();
+                        throw new BadRequestExceptionImpl();
                     }
                     for (JsonNode rowData : rowsData) {
                         XWPFTableRow row = table.createRow();
@@ -404,13 +404,13 @@ public class ScoreListServiceImpl {
             return getInputstream(docx);
         } catch (NullPointerExceptionImpl e) {
             e.printStackTrace();
-            throw new ServerErrorImpl();
+            throw new ServerExceptionImpl();
         } catch (MyException e) {
             e.printStackTrace();
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServerErrorImpl();
+            throw new ServerExceptionImpl();
         }
     }
     public InputStreamResource getScoreList(Long reportId) throws IOException {

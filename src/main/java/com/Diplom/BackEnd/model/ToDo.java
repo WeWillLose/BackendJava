@@ -14,7 +14,6 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class ToDo  extends SuperClass<String>  implements Serializable {
 
     @Id
@@ -37,5 +36,16 @@ public class ToDo  extends SuperClass<String>  implements Serializable {
         this.title = title;
         this.description = description;
         this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return "ToDo{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", text='" + text + '\'' +
+                ", author=" + (author!=null?author.getId():"null") +
+                '}';
     }
 }

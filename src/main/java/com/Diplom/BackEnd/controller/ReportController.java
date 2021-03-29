@@ -1,15 +1,13 @@
 package com.Diplom.BackEnd.controller;
 
 import com.Diplom.BackEnd.dto.ReportDTO;
-import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.exception.MyException;
-import com.Diplom.BackEnd.exception.impl.NullPointerExceptionImpl;
-import com.Diplom.BackEnd.exception.impl.ServerErrorImpl;
+import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.ServerExceptionImpl;
 import com.Diplom.BackEnd.model.Report;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.service.ReportService;
 import com.Diplom.BackEnd.service.imp.ReportMapperServiceImpl;
-import com.Diplom.BackEnd.service.imp.ReportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -47,11 +45,11 @@ public class ReportController {
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(inputStreamResource);
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
 
@@ -62,11 +60,11 @@ public class ReportController {
             List<ReportDTO> reportDTOS = mapperForReportService.mapToReportDTOWithoutData(all);
             return ResponseEntity.ok().body(reportDTOS);
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
 
@@ -76,11 +74,11 @@ public class ReportController {
             Map<String, List<ReportDTO>> followersReports = reportService.getFollowersReports(chairmanID);
             return ResponseEntity.ok().body(followersReports);
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
     @GetMapping("chairman/followersReports/current")
@@ -89,11 +87,11 @@ public class ReportController {
             Map<String, List<ReportDTO>> followersReports = reportService.getFollowersReports(user.getId());
             return ResponseEntity.ok().body(followersReports);
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
 
@@ -102,11 +100,11 @@ public class ReportController {
         try{
             return ResponseEntity.ok().body(mapperForReportService.mapToReportDTOWithoutData(reportService.getAllByAuthorId(id)));
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
     @GetMapping("/{id}")
@@ -114,11 +112,11 @@ public class ReportController {
         try{
             return ResponseEntity.ok().body(mapperForReportService.mapToReportDTO(reportService.getByReportId(id)));
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
     @PutMapping("/{id}")
@@ -126,11 +124,11 @@ public class ReportController {
         try{
             return ResponseEntity.ok().body(mapperForReportService.mapToReportDTO(reportService.updateReport(id,reportDTO)));
         }catch (NullPointerExceptionImpl e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){
-            return new ServerErrorImpl().getResponseEntity();
+            return new ServerExceptionImpl().getResponseEntity();
         }
     }
 }

@@ -21,7 +21,6 @@ import java.util.Date;
         typeClass = JsonStringType.class,
         defaultForType = JsonNode.class
 )
-@ToString
 public class Report extends SuperClass<String> {
     public Long getId() {
         return id;
@@ -107,4 +106,17 @@ public class Report extends SuperClass<String> {
     @UpdateTimestamp
     @Column
     private Date updated;
+
+    @Override
+    public String toString() {
+        return "Report{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", data=" + data +
+                ", author=" + (author!=null?author.getId():"null") +
+                ", status=" + status +
+                ", created=" + created +
+                ", updated=" + updated +
+                '}';
+    }
 }
