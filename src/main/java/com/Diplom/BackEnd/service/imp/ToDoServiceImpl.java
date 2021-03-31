@@ -1,8 +1,8 @@
 package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.dto.ToDoDTO;
-import com.Diplom.BackEnd.exception.impl.ForbiddenExceptionImpl;
 import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
+import com.Diplom.BackEnd.exception.impl.ForbiddenExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ToDoNotFoundExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.UserNotFoundExceptionImpl;
 import com.Diplom.BackEnd.model.ToDo;

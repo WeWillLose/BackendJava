@@ -14,7 +14,7 @@ public interface ReportService {
 
      InputStreamResource generateReportDocx(Long id);
 
-     Report saveReport(Report report, Long id);
+     Report saveReport(Report report, Long authorId);
 
      List<Report> getAll();
 
@@ -23,6 +23,7 @@ public interface ReportService {
      Report getByReportId(Long reportId); 
 
      boolean existsById(Long reportId);
+
      Map<String,List<ReportDTO>> getFollowersReports(Long chairmanId);
 
     Report updateReport(Long id, ReportDTO reportDTO);

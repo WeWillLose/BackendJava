@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import static org.springframework.util.StringUtils.capitalize;
 
 import java.util.HashSet;
 import java.util.List;
@@ -251,6 +252,44 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findChairmans() {
         return chairmanService.findChairmans();
+    }
+
+    @Override
+    public String getShortFIO(User user) {
+        if(user == null){
+            throw  new NullPointerExceptionImpl("IN getFIO user is null");
+        }
+        StringBuilder fio = new StringBuilder();
+        if(user.getLastName() !=null && !user.getLastName().isBlank()){
+            fio.append(capitalize(user.getLastName()));
+        }
+        if(user.getFirstName() !=null && !user.getFirstName().isBlank()){
+            fio.append(String.format(" %.1s.",user.getFirstName()));
+        }
+        if(user.getPatronymic() !=null && !user.getPatronymic().isBlank()){
+            fio.append(String.format(" %.1s.",user.getPatronymic()));
+        }
+
+        return fio.toString();
+    }
+
+    @Override
+    public String getFIO(User user) {
+        if(user == null){
+            throw  new NullPointerExceptionImpl("IN getFIO user is null");
+        }
+        StringBuilder fio = new StringBuilder();
+        if(user.getLastName() !=null && !user.getLastName().isBlank()){
+            fio.append(capitalize(user.getLastName()));
+        }
+        if(user.getFirstName() !=null && !user.getFirstName().isBlank()){
+            fio.append(String.format(" %s.",capitalize(user.getFirstName())));
+        }
+        if(user.getPatronymic() !=null && !user.getPatronymic().isBlank()){
+            fio.append(String.format(" %s.",capitalize(user.getPatronymic())));
+        }
+
+        return fio.toString();
     }
 
 

@@ -2,7 +2,6 @@ package com.Diplom.BackEnd.service;
 
 import com.Diplom.BackEnd.dto.ToDoDTO;
 import com.Diplom.BackEnd.model.ToDo;
-import com.Diplom.BackEnd.model.User;
 
 import java.util.List;
 

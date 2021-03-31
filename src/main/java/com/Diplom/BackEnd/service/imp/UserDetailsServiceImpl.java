@@ -1,6 +1,5 @@
 package com.Diplom.BackEnd.service.imp;
 
-import com.Diplom.BackEnd.exception.impl.UserNotFoundExceptionImpl;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.service.UserService;
 import lombok.NoArgsConstructor;

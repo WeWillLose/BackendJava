@@ -30,25 +30,31 @@ public class ReportController {
 
     @PostMapping("save")
     public ResponseEntity<?> saveReport(@RequestBody Report report, @AuthenticationPrincipal User user){
-        return   ResponseEntity.ok(reportService.saveReport(report,user.getId()));
+        try{
+            return   ResponseEntity.ok(reportService.saveReport(report,user.getId()));
+        } catch (MyException e) {
+            return e.getResponseEntity();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ServerExceptionImpl().getResponseEntity();
+        }
+
     }
     @GetMapping("docx/{id}")
-    public ResponseEntity<?> getReportDocx(@PathVariable Long id, @AuthenticationPrincipal User user){
+    public ResponseEntity<?> getReportDocx(@PathVariable Long id){
         try{
         InputStreamResource inputStreamResource = reportService.generateReportDocx(id);
         HttpHeaders headers = new HttpHeaders();
-
-        String format = String.format("attachment; filename=%s.docx", UUID.randomUUID().toString());
+        String format = String.format("attachment; filename=report_%s.docx", UUID.randomUUID().toString());
         headers.add(HttpHeaders.CONTENT_DISPOSITION,format );
         return ResponseEntity.ok()
                     .headers(headers)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(inputStreamResource);
-        }catch (NullPointerExceptionImpl e){
-            return new ServerExceptionImpl().getResponseEntity();
-        }catch (MyException e){
+        } catch (MyException e) {
             return e.getResponseEntity();
-        }catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ServerExceptionImpl().getResponseEntity();
         }
     }
@@ -59,38 +65,35 @@ public class ReportController {
             List<Report> all = reportService.getAllByAuthorId(user.getId());
             List<ReportDTO> reportDTOS = mapperForReportService.mapToReportDTOWithoutData(all);
             return ResponseEntity.ok().body(reportDTOS);
-        }catch (NullPointerExceptionImpl e){
-            return new ServerExceptionImpl().getResponseEntity();
-        }catch (MyException e){
+        } catch (MyException e) {
             return e.getResponseEntity();
-        }catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ServerExceptionImpl().getResponseEntity();
         }
     }
 
-    @GetMapping("chairman/followersReports/{id}")
+    @GetMapping("followersReports/{id}")
     public ResponseEntity<?> getReportByChairmanId(@PathVariable(name = "id") Long chairmanID){
         try{
             Map<String, List<ReportDTO>> followersReports = reportService.getFollowersReports(chairmanID);
             return ResponseEntity.ok().body(followersReports);
-        }catch (NullPointerExceptionImpl e){
-            return new ServerExceptionImpl().getResponseEntity();
-        }catch (MyException e){
+        } catch (MyException e) {
             return e.getResponseEntity();
-        }catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ServerExceptionImpl().getResponseEntity();
         }
     }
-    @GetMapping("chairman/followersReports/current")
+    @GetMapping("followersReports/current")
     public ResponseEntity<?> getReportByChairmanId(@AuthenticationPrincipal User user){
         try{
             Map<String, List<ReportDTO>> followersReports = reportService.getFollowersReports(user.getId());
             return ResponseEntity.ok().body(followersReports);
-        }catch (NullPointerExceptionImpl e){
-            return new ServerExceptionImpl().getResponseEntity();
-        }catch (MyException e){
+        } catch (MyException e) {
             return e.getResponseEntity();
-        }catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ServerExceptionImpl().getResponseEntity();
         }
     }
@@ -99,11 +102,10 @@ public class ReportController {
     public ResponseEntity<?> getReportByAuthor(@PathVariable Long id){
         try{
             return ResponseEntity.ok().body(mapperForReportService.mapToReportDTOWithoutData(reportService.getAllByAuthorId(id)));
-        }catch (NullPointerExceptionImpl e){
-            return new ServerExceptionImpl().getResponseEntity();
-        }catch (MyException e){
+        } catch (MyException e) {
             return e.getResponseEntity();
-        }catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ServerExceptionImpl().getResponseEntity();
         }
     }
@@ -111,11 +113,10 @@ public class ReportController {
     public ResponseEntity<?> getReportById(@PathVariable Long id){
         try{
             return ResponseEntity.ok().body(mapperForReportService.mapToReportDTO(reportService.getByReportId(id)));
-        }catch (NullPointerExceptionImpl e){
-            return new ServerExceptionImpl().getResponseEntity();
-        }catch (MyException e){
+        } catch (MyException e) {
             return e.getResponseEntity();
-        }catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ServerExceptionImpl().getResponseEntity();
         }
     }
@@ -123,11 +124,10 @@ public class ReportController {
     public ResponseEntity<?> updateReport(@PathVariable Long id,@RequestBody ReportDTO reportDTO){
         try{
             return ResponseEntity.ok().body(mapperForReportService.mapToReportDTO(reportService.updateReport(id,reportDTO)));
-        }catch (NullPointerExceptionImpl e){
-            return new ServerExceptionImpl().getResponseEntity();
-        }catch (MyException e){
+        } catch (MyException e) {
             return e.getResponseEntity();
-        }catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ServerExceptionImpl().getResponseEntity();
         }
     }

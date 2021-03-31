@@ -26,4 +26,8 @@ public interface UserService {
     User setChairman(Long slaveId, UserDTO chairmanDTO);
 
     List<User> findChairmans();
+
+    String getShortFIO(User user);
+
+    String getFIO(User user);
 }

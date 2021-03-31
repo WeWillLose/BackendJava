@@ -178,7 +178,7 @@ public class ReportDocxServiceImpl {
 
     private InputStreamResource getInputStream(XWPFDocument docx) throws IOException {
         if (docx == null) {
-            throw new NullPointerExceptionImpl("IN getInputstream docx is null");
+            throw new NullPointerExceptionImpl("IN getInputStream docx is null");
         }
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             docx.write(byteArrayOutputStream);
@@ -192,9 +192,6 @@ public class ReportDocxServiceImpl {
             XWPFDocument docx = new XWPFDocument(fos);
             parsReportTemplate(docx, REGEXP, report.getData());
             return getInputStream(docx);
-        } catch (NullPointerExceptionImpl e) {
-            e.printStackTrace();
-            throw new ServerExceptionImpl();
         } catch (MyException e) {
             e.printStackTrace();
             throw e;

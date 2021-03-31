@@ -25,12 +25,16 @@ import java.util.*;
 public class ReportServiceImpl implements ReportService {
     @Autowired
     private ReportTableRepo reportTableRepo;
+
     @Autowired
     UserService userService;
+
     @Autowired
     ReportDocxServiceImpl reportDocxService;
+
     @Autowired
     UserMapperService userMapperService;
+
     @Autowired
     ReportMapperService reportMapperService;
 
@@ -41,32 +45,28 @@ public class ReportServiceImpl implements ReportService {
         if(reportId == null){
             throw new NullPointerExceptionImpl("reportId is null");
         }
+
         Report report = reportTableRepo.findById(reportId).orElse(null);
+
         if(report == null){
-            throw new ReportNotFoundExceptionImpl();
+            throw new ReportNotFoundExceptionImpl(reportId);
         }
+
         return reportDocxService.createReportDocx(report,PATTERN);
     }
 
-    public Report saveReport(Report report, Long id) {
-        if(id == null){throw new NullPointerExceptionImpl("IN saveReport id is null");}
-        User author = userService.findById(id);
+    public Report saveReport(Report report, Long authorId) {
+        if(authorId == null){throw new NullPointerExceptionImpl("IN saveReport authorId is null");}
+        User author = userService.findById(authorId);
         if(author == null){
-            throw new UserNotFoundExceptionImpl(id);
+            throw new UserNotFoundExceptionImpl(authorId);
         }
-        if(author.getFirstName()!=null && !author.getFirstName().isBlank() &&
-                author.getLastName()!=null && !author.getLastName().isBlank() &&
-                author.getPatronymic()!=null && !author.getPatronymic().isBlank()){
-            report.setName(String.format("report_%s_%s_%s.docx",author.getLastName(),author.getFirstName(),author.getPatronymic()));
-
-        }else{
-            report.setName(String.format("report_%s.docx",UUID.randomUUID().toString()));
-        }
+        report.setName(generateReportDocxNameFromAuthorFIOOrUUID(author));
         if(report.getData()!=null && author.getChairman() !=null){
             ((ObjectNode)report.getData()).put("chairmanFIO", String.format("%s %.1s.%.1s.",author.getChairman().getLastName(),author.getChairman().getFirstName(),
                     author.getChairman().getPatronymic()));
         }
-        report.setAuthor(userService.findById(author.getId()));
+        report.setAuthor(author);
         report.setStatus(EReportStatus.UNCHECKED);
         return reportTableRepo.save(report);
     }
@@ -96,10 +96,7 @@ public class ReportServiceImpl implements ReportService {
         Map<String,List<ReportDTO>> user_reports = new HashMap<>();
 
         followers.forEach(t->{
-            String fio = String.format("%s %.1s. %.1s.",t.getLastName()!=null?t.getLastName():"",
-                    t.getFirstName()!=null?t.getFirstName():"",
-                    t.getPatronymic()!=null?t.getPatronymic():"");
-            user_reports.put(fio,reportMapperService.mapToReportDTO(getAllByAuthorId(t.getId())));
+            user_reports.put(userService.getShortFIO(t),reportMapperService.mapToReportDTO(getAllByAuthorId(t.getId())));
         });
 
         return user_reports;
@@ -144,6 +141,19 @@ public class ReportServiceImpl implements ReportService {
             return false;
         }
         return reportTableRepo.existsById(reportId);
+    }
+
+    private String generateReportDocxNameFromAuthorFIOOrUUID(User author){
+        if(author == null){
+            throw new NullPointerExceptionImpl("IN generateReportDocxNameFromAuthorFIOOrUUID author is null");
+        }
+        String name = userService.getFIO(author);
+
+        if(name == null || name.isBlank()){
+            name = UUID.randomUUID().toString();
+        }
+
+        return (String.format("report_%s.docx",name.replace(" ","_")));
     }
 
 
