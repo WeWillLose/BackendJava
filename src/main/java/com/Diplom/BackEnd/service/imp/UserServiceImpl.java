@@ -10,9 +10,7 @@ import com.Diplom.BackEnd.repo.RoleRepo;
 import com.Diplom.BackEnd.repo.UserRepo;
 import com.Diplom.BackEnd.service.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,12 +35,11 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder encoder;
 
     @Autowired
-    private ValidateUserService validateUserService;
+    private UserValidationService userValidationService;
 
     @Autowired
     private CanEditService canEditService;
-    @Autowired
-    private UserValidationService userValidationService;
+
     @Autowired
     private ChairmanService chairmanService;
 
@@ -98,14 +95,14 @@ public class UserServiceImpl implements UserService {
             throw new NullPointerExceptionImpl("id must not be null");
         }
         User user = this.findById(id);
+        if (user == null) {
+            throw new UserNotFoundExceptionImpl(id);
+        }
         if (user.getRoles().contains(new Role(ERole.ROLE_ADMIN))) {
             throw new ValidationExceptionImpl("Админа нельзя удалить");
         }
         if (user.getId() == null) {
             throw new ValidationExceptionImpl("id должен быть не пустым");
-        }
-        if (!this.existsById(user.getId())) {
-            throw new UserNotFoundExceptionImpl(user.getId());
         }
         if (!canEditService.canEdit(user)) {
             throw new ForbiddenExceptionImpl();
@@ -146,19 +143,19 @@ public class UserServiceImpl implements UserService {
             user.setUsername(changedUser.getUsername());
         }
         if (changedUser.getFirstName() != null && !changedUser.getFirstName().isBlank()) {
-            if (!validateUserService.validateUserFirstName(changedUser.getFirstName())) {
+            if (!userValidationService.validateUserFirstName(changedUser.getFirstName())) {
                 throw new ValidationExceptionImpl("Имя не прошло валидацию");
             }
             user.setFirstName(changedUser.getFirstName());
         }
         if (changedUser.getLastName() != null && !changedUser.getLastName().isBlank()) {
-            if (!validateUserService.validateUserLastName(changedUser.getLastName())) {
+            if (!userValidationService.validateUserLastName(changedUser.getLastName())) {
                 throw new ValidationExceptionImpl("Фамилия не прошло валидацию");
             }
             user.setLastName(changedUser.getLastName());
         }
         if (changedUser.getPatronymic() != null && !changedUser.getPatronymic().isBlank()) {
-            if (!validateUserService.validateUserPatronymic(changedUser.getPatronymic())) {
+            if (!userValidationService.validateUserPatronymic(changedUser.getPatronymic())) {
                 throw new ValidationExceptionImpl("Отчество не прошло валидацию");
             }
             user.setPatronymic(changedUser.getPatronymic());
@@ -176,7 +173,7 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundExceptionImpl(userId);
         }
 
-        if (!validateUserService.validateUserPassword(password)) {
+        if (!userValidationService.validateUserPassword(password)) {
             throw new ValidationExceptionImpl("Пароль не прошел валидацию");
         }
 

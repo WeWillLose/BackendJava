@@ -17,8 +17,10 @@ public abstract class MyException extends RuntimeException{
         return ResponseEntity.status(this.status).body(messageDTO);
     }
 
-    public MyException(HttpStatus status, ErrorMessageDTO messageDTO) {
+    public MyException(HttpStatus status, ErrorMessageDTO messageDTO){
+         super(messageDTO!=null?messageDTO.getMessage()!=null?messageDTO.getMessage():"":"");
         this.messageDTO = messageDTO;
         this.status = status;
     }
+
 }

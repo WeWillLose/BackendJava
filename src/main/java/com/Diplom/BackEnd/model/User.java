@@ -2,6 +2,7 @@ package com.Diplom.BackEnd.model;
 
 
 import lombok.AllArgsConstructor;
+
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;

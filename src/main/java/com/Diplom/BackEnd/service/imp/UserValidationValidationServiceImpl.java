@@ -2,11 +2,11 @@ package com.Diplom.BackEnd.service.imp;
 
 import com.Diplom.BackEnd.dto.PasswordResetDTO;
 import com.Diplom.BackEnd.dto.UserDTO;
-import com.Diplom.BackEnd.service.ValidateUserService;
+import com.Diplom.BackEnd.service.UserValidationService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserValidationService implements ValidateUserService {
+public class UserValidationValidationServiceImpl implements UserValidationService {
 
 
     public boolean validateUserDtoForUpdateInfo(UserDTO userDTO) {

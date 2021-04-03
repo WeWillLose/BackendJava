@@ -16,7 +16,7 @@ import com.Diplom.BackEnd.repo.UserRepo;
 import com.Diplom.BackEnd.service.AuthService;
 import com.Diplom.BackEnd.service.CanEditService;
 import com.Diplom.BackEnd.service.UserMapperService;
-import com.Diplom.BackEnd.service.ValidateUserService;
+import com.Diplom.BackEnd.service.UserValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     CanEditService canEditService;
     @Autowired
-    ValidateUserService validateUserService;
+    UserValidationService userValidationService;
 
     @Override
     public User authenticateUser(LoginDTO loginDTO) throws MyException {
@@ -77,19 +77,19 @@ public class AuthServiceImpl implements AuthService {
         if(signUpDTO == null){
             throw new NullPointerExceptionImpl("signUpDTO must not be null");
         }
-        if(!validateUserService.validateUserPassword(signUpDTO.getPassword())){
+        if(!userValidationService.validateUserPassword(signUpDTO.getPassword())){
             throw new ValidationExceptionImpl("Пароль не прошел валидацию");
         }
-        if(!validateUserService.validateUserUsername(signUpDTO.getUsername())){
+        if(!userValidationService.validateUserUsername(signUpDTO.getUsername())){
             throw new ValidationExceptionImpl("Логин не прошел валидацию");
         }
-        if(!validateUserService.validateUserFirstName(signUpDTO.getFirstName())){
+        if(!userValidationService.validateUserFirstName(signUpDTO.getFirstName())){
             throw new ValidationExceptionImpl("Имя не прошло валидацию");
         }
-        if(!validateUserService.validateUserLastName(signUpDTO.getLastName())){
+        if(!userValidationService.validateUserLastName(signUpDTO.getLastName())){
             throw new ValidationExceptionImpl("Фамилия не прошла валидацию");
         }
-        if(!validateUserService.validateUserPatronymic(signUpDTO.getPatronymic())){
+        if(!userValidationService.validateUserPatronymic(signUpDTO.getPatronymic())){
             throw new ValidationExceptionImpl("Отчество не прошло валидацию");
         }
         if (userRepository.existsByUsername(signUpDTO.getUsername())) {

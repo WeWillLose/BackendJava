@@ -3,7 +3,7 @@ package com.Diplom.BackEnd.service;
 import com.Diplom.BackEnd.dto.PasswordResetDTO;
 import com.Diplom.BackEnd.dto.UserDTO;
 
-public interface ValidateUserService {
+public interface UserValidationService {
     boolean validateUserDtoForUpdateInfo(UserDTO userDTO);
 
     boolean validateUserDtoForPasswordResetDto(PasswordResetDTO passwordResetDTO);
