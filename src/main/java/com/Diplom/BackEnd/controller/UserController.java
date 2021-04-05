@@ -39,6 +39,7 @@ public class UserController {
             return new ServerExceptionImpl().getResponseEntity();
         }
     }
+
     @GetMapping("info/all")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_CHAIRMAN')")
     public ResponseEntity<?> getAllUserInfo(){

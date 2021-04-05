@@ -51,10 +51,10 @@ public class AuthController {
             return new ServerExceptionImpl().getResponseEntity();
         }
     }
-    @GetMapping("current")
+    @GetMapping("isLogged ")
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal User user) {
         try{
-            return ResponseEntity.ok().body(userMapperService.mapToUserDto(user));
+            return ResponseEntity.ok().body(user != null);
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){

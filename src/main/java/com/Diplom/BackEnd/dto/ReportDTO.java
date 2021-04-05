@@ -1,7 +1,6 @@
 package com.Diplom.BackEnd.dto;
 
 import com.Diplom.BackEnd.model.EReportStatus;
-import com.Diplom.BackEnd.model.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;

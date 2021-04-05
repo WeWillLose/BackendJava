@@ -43,7 +43,7 @@ public class ReportMapperServiceImpl implements ReportMapperService {
         if(reports == null){
             return null;
         }
-        return reports.stream().map(this::mapToReportDTO).collect(Collectors.toList());
+        return reports.stream().map(this::mapToReportDTOWithoutData).collect(Collectors.toList());
     }
 
     public ReportDTO mapToReportDTOWithoutData(Report report) {
@@ -59,6 +59,7 @@ public class ReportMapperServiceImpl implements ReportMapperService {
         reportDTO.setStatus(report.getStatus());
         reportDTO.setCreatedDate(report.getCreatedDate());
         reportDTO.setLastModifiedDate(report.getLastModifiedDate());
+        log.info("IN mapToReportDTOWithoutData from report:{} mapped to reportDto{}",report,reportDTO);
         return reportDTO;
     }
 }

@@ -3,6 +3,7 @@ package com.Diplom.BackEnd.dto;
 import com.Diplom.BackEnd.model.ERole;
 import com.Diplom.BackEnd.model.Role;
 import com.Diplom.BackEnd.model.User;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.mapping.Collection;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 public class UserDTO {
+
     private Long id;
 
     private String username;

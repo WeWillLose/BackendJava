@@ -2,7 +2,6 @@ package com.Diplom.BackEnd.controller;
 
 import com.Diplom.BackEnd.dto.ReportDTO;
 import com.Diplom.BackEnd.exception.MyException;
-import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ServerExceptionImpl;
 import com.Diplom.BackEnd.model.Report;
 import com.Diplom.BackEnd.model.User;
@@ -17,7 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -62,8 +60,7 @@ public class ReportController {
     @GetMapping("author/current")
     public ResponseEntity<?> getReportByCurrentUser(@AuthenticationPrincipal User user){
         try{
-            List<Report> all = reportService.getAllByAuthorId(user.getId());
-            List<ReportDTO> reportDTOS = mapperForReportService.mapToReportDTOWithoutData(all);
+            List<ReportDTO> reportDTOS = mapperForReportService.mapToReportDTOWithoutData(reportService.getAllByAuthorId(user.getId()));
             return ResponseEntity.ok().body(reportDTOS);
         } catch (MyException e) {
             return e.getResponseEntity();
@@ -76,7 +73,7 @@ public class ReportController {
     @GetMapping("followersReports/{id}")
     public ResponseEntity<?> getReportByChairmanId(@PathVariable(name = "id") Long chairmanID){
         try{
-            Map<String, List<ReportDTO>> followersReports = reportService.getFollowersReports(chairmanID);
+            List<ReportDTO> followersReports = mapperForReportService.mapToReportDTOWithoutData(reportService.getFollowersReports(chairmanID));
             return ResponseEntity.ok().body(followersReports);
         } catch (MyException e) {
             return e.getResponseEntity();
@@ -88,7 +85,7 @@ public class ReportController {
     @GetMapping("followersReports/current")
     public ResponseEntity<?> getReportByChairmanId(@AuthenticationPrincipal User user){
         try{
-            Map<String, List<ReportDTO>> followersReports = reportService.getFollowersReports(user.getId());
+            List<ReportDTO> followersReports = mapperForReportService.mapToReportDTOWithoutData(reportService.getFollowersReports(user.getId()));
             return ResponseEntity.ok().body(followersReports);
         } catch (MyException e) {
             return e.getResponseEntity();

@@ -85,21 +85,23 @@ public class ReportServiceImpl implements ReportService {
         return reportTableRepo.findAllByAuthorId(authorId);
     }
     @Override
-    public Map<String,List<ReportDTO>> getFollowersReports(Long chairmanId) {
+    public List<Report> getFollowersReports(Long chairmanId) {
         if(chairmanId == null){
             throw new NullPointerExceptionImpl("chairmanId is null");
         }
         List<User> followers = userService.findFollowers(chairmanId);
+
         if(followers == null){
             throw new UserNotFoundExceptionImpl(chairmanId);
         }
-        Map<String,List<ReportDTO>> user_reports = new HashMap<>();
+
+        List<Report> reports = new ArrayList<>();
 
         followers.forEach(t->{
-            user_reports.put(userService.getShortFIO(t),reportMapperService.mapToReportDTO(getAllByAuthorId(t.getId())));
+            reports.addAll(getAllByAuthorId(t.getId()));
         });
 
-        return user_reports;
+        return reports;
 
     }
 
