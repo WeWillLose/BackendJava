@@ -27,4 +27,5 @@ public interface ReportService {
      List<Report> getFollowersReports(Long chairmanId);
 
     Report updateReport(Long id, ReportDTO reportDTO);
+    void deleteReport(Long id);
 }

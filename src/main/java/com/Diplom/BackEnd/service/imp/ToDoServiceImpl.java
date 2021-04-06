@@ -14,6 +14,7 @@ import com.Diplom.BackEnd.service.ToDoService;
 import com.Diplom.BackEnd.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -73,7 +74,7 @@ public class ToDoServiceImpl implements ToDoService {
             throw new ToDoNotFoundExceptionImpl(sourceToDoId);
         }
 
-        if(!canEditService.canEdit(toDo.getAuthor())){
+        if(!toDo.getAuthor().getId().equals(((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId())){
             throw new ForbiddenExceptionImpl();
         }
 
@@ -123,7 +124,7 @@ public class ToDoServiceImpl implements ToDoService {
         if(toDo == null){
             throw new ToDoNotFoundExceptionImpl(toDoId);
         }
-        if(!canEditService.canEdit(toDo.getAuthor())){
+        if(!toDo.getAuthor().getId().equals(((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId())){
             throw new ForbiddenExceptionImpl();
         }
         toDoRepo.delete(toDo);

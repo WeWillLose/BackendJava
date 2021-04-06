@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User registerUser(SignupDTO signUpDTO)  throws MyException{
-        if(!canEditService.canCreate((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())){
+        if(!canEditService.canEditOnlyAdmin((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())){
             throw new ForbiddenExceptionImpl();
         }
         log.info("IN registerUser signUpDTO: {}",signUpDTO);

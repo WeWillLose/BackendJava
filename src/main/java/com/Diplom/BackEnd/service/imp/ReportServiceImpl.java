@@ -7,14 +7,14 @@ import com.Diplom.BackEnd.model.EReportStatus;
 import com.Diplom.BackEnd.model.Report;
 import com.Diplom.BackEnd.model.User;
 import com.Diplom.BackEnd.repo.ReportTableRepo;
-import com.Diplom.BackEnd.service.ReportMapperService;
-import com.Diplom.BackEnd.service.ReportService;
-import com.Diplom.BackEnd.service.UserMapperService;
-import com.Diplom.BackEnd.service.UserService;
+import com.Diplom.BackEnd.service.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
@@ -37,6 +37,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     ReportMapperService reportMapperService;
+
+    @Autowired
+    CanEditService canEditService;
 
     private final String PATTERN = "\\{\\{([a-zA-z0-9]+)}}";
 
@@ -115,7 +118,10 @@ public class ReportServiceImpl implements ReportService {
         }
         Report report = reportTableRepo.findById(id).orElse(null);
         if(report == null){
-            throw new ReportNotFoundExceptionImpl();
+            throw new ReportNotFoundExceptionImpl(id);
+        }
+        if(!canEditService.canEditReportWithChairman((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal(),report)){
+            throw new ForbiddenExceptionImpl();
         }
         if(reportDTO.getName()!=null&& !reportDTO.getName().isBlank()){
             report.setName(reportDTO.getName());
@@ -128,6 +134,18 @@ public class ReportServiceImpl implements ReportService {
         }
 
         return reportTableRepo.save(report);
+    }
+
+    @Override
+    public void deleteReport(Long id) {
+        Report report = getByReportId(id);
+        if(report == null){
+            throw  new ReportNotFoundExceptionImpl(id);
+        }
+        if(!canEditService.canEditReportWithChairman((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal(),report)){
+            throw new ForbiddenExceptionImpl();
+        }
+        reportTableRepo.delete(report);
     }
 
     public Report getByReportId(Long reportId) {

@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
         if (user.getId() == null) {
             throw new ValidationExceptionImpl("id должен быть не пустым");
         }
-        if (!canEditService.canEdit(user)) {
+        if (!canEditService.canEditOnlyAdmin((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())) {
             throw new ForbiddenExceptionImpl();
         }
 
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
             throw new NullPointerExceptionImpl("changedUser must not be null");
         }
 
-        if (!canEditService.canEdit(user)) {
+        if (!canEditService.canEdit((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(),user)) {
             throw new ForbiddenExceptionImpl();
         }
         if (changedUser.getUsername() != null && !changedUser.getUsername().isBlank()) {
@@ -177,7 +177,7 @@ public class UserServiceImpl implements UserService {
             throw new ValidationExceptionImpl("Пароль не прошел валидацию");
         }
 
-        if (!canEditService.canEdit(user)) {
+        if (!canEditService.canEdit((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(),user)) {
             throw new ForbiddenExceptionImpl();
         }
         user.setPassword(encoder.encode(password));

@@ -89,7 +89,7 @@ public class UserServiceTest {
         db.add(user1);
 
         when(userRepo.findById(1L)).thenReturn(java.util.Optional.of(user1));
-        when(canEditService.canEdit(any())).thenReturn(true);
+        when(canEditService.canEdit(any(),any())).thenReturn(true);
 
         userService.delete(1L);
         verify(userRepo,times(1)).delete(any());
@@ -110,7 +110,7 @@ public class UserServiceTest {
         db.add(user1);
 
         when(userRepo.findById(1L)).thenReturn(java.util.Optional.of(user1));
-        when(canEditService.canEdit(any())).thenReturn(true);
+        when(canEditService.canEdit(any(),any())).thenReturn(true);
         assertThatThrownBy(()->userService.delete(1L)).isInstanceOf(ValidationExceptionImpl.class).hasMessageContaining("Админа нельзя удалить");
         verify(userRepo,never()).delete(any());
     }
@@ -118,7 +118,7 @@ public class UserServiceTest {
     @Test
     public void when_delete_should_throw_NotFoundException(){
         when(userRepo.findById(1L)).thenReturn(java.util.Optional.empty());
-        when(canEditService.canEdit(any())).thenReturn(true);
+        when(canEditService.canEdit(any(),any())).thenReturn(true);
         assertThatThrownBy(()->userService.delete(1L)).isInstanceOf(UserNotFoundExceptionImpl.class).hasMessageContaining("id: 1");
         verify(userRepo,never()).delete(any());
     }
@@ -135,7 +135,7 @@ public class UserServiceTest {
         user1.setRoles(Set.of(new Role(ERole.ROLE_ADMIN),new Role(ERole.ROLE_TEACHER)));
         when(userRepo.findById(1L)).thenReturn(java.util.Optional.of(user1));
         when(userRepo.save(any())).thenAnswer(t->t.getArgument(0));
-        when(canEditService.canEdit(any())).thenReturn(true);
+        when(canEditService.canEdit(any(),any())).thenReturn(true);
         User editedFirstName = new User() {{
             setFirstName("EditedFirstName");
         }};

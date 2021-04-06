@@ -94,6 +94,18 @@ public class ReportController {
             return new ServerExceptionImpl().getResponseEntity();
         }
     }
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteReportById(@PathVariable Long id){
+        try{
+            reportService.deleteReport(id);
+            return ResponseEntity.ok().body(null);
+        } catch (MyException e) {
+            return e.getResponseEntity();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ServerExceptionImpl().getResponseEntity();
+        }
+    }
 
     @GetMapping("author/{id}")
     public ResponseEntity<?> getReportByAuthor(@PathVariable Long id){
