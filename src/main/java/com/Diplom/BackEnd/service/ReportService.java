@@ -1,5 +1,6 @@
 package com.Diplom.BackEnd.service;
 
+import com.Diplom.BackEnd.dto.InputStreamResourceDTO;
 import com.Diplom.BackEnd.dto.ReportDTO;
 import com.Diplom.BackEnd.dto.UserDTO;
 import com.Diplom.BackEnd.model.Report;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 public interface ReportService {
 
-     InputStreamResource generateReportDocx(Long id);
+     InputStreamResourceDTO generateReportDocx(Long id);
 
      Report saveReport(Report report, Long authorId);
 

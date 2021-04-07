@@ -1,5 +1,6 @@
 package com.Diplom.BackEnd.controller;
 
+import com.Diplom.BackEnd.dto.InputStreamResourceDTO;
 import com.Diplom.BackEnd.dto.ReportDTO;
 import com.Diplom.BackEnd.exception.MyException;
 import com.Diplom.BackEnd.exception.impl.ServerExceptionImpl;
@@ -41,14 +42,17 @@ public class ReportController {
     @GetMapping("docx/{id}")
     public ResponseEntity<?> getReportDocx(@PathVariable Long id){
         try{
-        InputStreamResource inputStreamResource = reportService.generateReportDocx(id);
+        InputStreamResourceDTO inputStreamResource = reportService.generateReportDocx(id);
         HttpHeaders headers = new HttpHeaders();
-        String format = String.format("attachment; filename=report_%s.docx", UUID.randomUUID().toString());
+        if(inputStreamResource.getFileName().isBlank()){
+            inputStreamResource.setFileName("report_"+UUID.randomUUID().toString()+".docx");
+        }
+        String format = String.format("attachment; filename=%s", inputStreamResource.getFileName());
         headers.add(HttpHeaders.CONTENT_DISPOSITION,format );
         return ResponseEntity.ok()
                     .headers(headers)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(inputStreamResource);
+                    .body(inputStreamResource.inputStreamResource);
         } catch (MyException e) {
             return e.getResponseEntity();
         } catch (Exception e) {

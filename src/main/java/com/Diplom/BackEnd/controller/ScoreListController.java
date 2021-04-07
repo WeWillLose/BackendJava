@@ -1,5 +1,6 @@
 package com.Diplom.BackEnd.controller;
 
+import com.Diplom.BackEnd.dto.InputStreamResourceDTO;
 import com.Diplom.BackEnd.exception.MyException;
 import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.ServerExceptionImpl;
@@ -24,15 +25,17 @@ public class ScoreListController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getScoreList(@PathVariable Long id){
         try{
-            InputStreamResource inputStreamResource = scoreListService.getScoreList(id);
+            InputStreamResourceDTO inputStreamResource = scoreListService.getScoreList(id);
             HttpHeaders headers = new HttpHeaders();
-
-            String format = String.format("attachment; filename=%s.docx", UUID.randomUUID().toString());
+            if(inputStreamResource.getFileName().isBlank()){
+                inputStreamResource.setFileName("report_"+UUID.randomUUID().toString()+".docx");
+            }
+            String format = String.format("attachment; filename=%s", inputStreamResource.getFileName());
             headers.add(HttpHeaders.CONTENT_DISPOSITION,format );
             return ResponseEntity.ok()
                     .headers(headers)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(inputStreamResource);
+                    .body(inputStreamResource.getInputStreamResource());
         }catch (NullPointerExceptionImpl e){
             return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){

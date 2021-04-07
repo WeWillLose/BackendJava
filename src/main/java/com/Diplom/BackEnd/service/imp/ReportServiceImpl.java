@@ -1,5 +1,6 @@
 package com.Diplom.BackEnd.service.imp;
 
+import com.Diplom.BackEnd.dto.InputStreamResourceDTO;
 import com.Diplom.BackEnd.dto.ReportDTO;
 import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
 import com.Diplom.BackEnd.exception.impl.*;
@@ -44,7 +45,7 @@ public class ReportServiceImpl implements ReportService {
     private final String PATTERN = "\\{\\{([a-zA-z0-9]+)}}";
 
 
-    public InputStreamResource generateReportDocx(Long reportId) {
+    public InputStreamResourceDTO generateReportDocx(Long reportId) {
         if(reportId == null){
             throw new NullPointerExceptionImpl("reportId is null");
         }
@@ -54,8 +55,7 @@ public class ReportServiceImpl implements ReportService {
         if(report == null){
             throw new ReportNotFoundExceptionImpl(reportId);
         }
-
-        return reportDocxService.createReportDocx(report,PATTERN);
+        return new InputStreamResourceDTO(reportDocxService.createReportDocx(report,PATTERN),report.getName());
     }
 
     public Report saveReport(Report report, Long authorId) {
@@ -64,10 +64,16 @@ public class ReportServiceImpl implements ReportService {
         if(author == null){
             throw new UserNotFoundExceptionImpl(authorId);
         }
-        report.setName(generateReportDocxNameFromAuthorFIOOrUUID(author));
+        if(report.getName() ==null || report.getName().isBlank()){
+            report.setName(generateReportDocxNameFromAuthorFIOOrUUID(author));
+        }
         if(report.getData()!=null && author.getChairman() !=null){
-            ((ObjectNode)report.getData()).put("chairmanFIO", String.format("%s %.1s.%.1s.",author.getChairman().getLastName(),author.getChairman().getFirstName(),
+            ((ObjectNode)report.getData()).put("chairmanFIO", String.format("%s %.1s. %.1s.",author.getChairman().getLastName(),author.getChairman().getFirstName(),
                     author.getChairman().getPatronymic()));
+        }
+        if(report.getData()!=null && ((ObjectNode)report.getData()).get("fioShort") == null){
+            ((ObjectNode)report.getData()).put("fioShort", String.format("%s %.1s.%.1s.",author.getLastName(),author.getFirstName(),
+                    author.getPatronymic()));
         }
         report.setAuthor(author);
         report.setStatus(EReportStatus.UNCHECKED);

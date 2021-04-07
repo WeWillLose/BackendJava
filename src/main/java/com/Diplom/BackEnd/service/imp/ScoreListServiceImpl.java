@@ -1,5 +1,6 @@
 package com.Diplom.BackEnd.service.imp;
 
+import com.Diplom.BackEnd.dto.InputStreamResourceDTO;
 import com.Diplom.BackEnd.exception.MyException;
 import com.Diplom.BackEnd.exception.impl.BadRequestExceptionImpl;
 import com.Diplom.BackEnd.exception.Runtime.NullPointerExceptionImpl;
@@ -21,6 +22,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -413,13 +415,16 @@ public class ScoreListServiceImpl {
             throw new ServerExceptionImpl();
         }
     }
-    public InputStreamResource getScoreList(Long reportId) throws IOException {
+    public InputStreamResourceDTO getScoreList(Long reportId) throws IOException {
         if (reportId == null) {
             throw new NullPointerExceptionImpl("id is null");
         }
         Report byReportId = reportService.getByReportId(reportId);
         if (byReportId != null) {
-            return generateScoreList(byReportId, REGEXP);
+            if(byReportId.getName().isBlank()){
+                byReportId.setName("report_"+UUID.randomUUID().toString()+".docx");
+            }
+            return new InputStreamResourceDTO(generateScoreList(byReportId, REGEXP),byReportId.getName());
         }else{
             throw new ReportNotFoundExceptionImpl();
         }
