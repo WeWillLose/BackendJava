@@ -27,17 +27,12 @@ public class ScoreListController {
         try{
             InputStreamResourceDTO inputStreamResource = scoreListService.getScoreList(id);
             HttpHeaders headers = new HttpHeaders();
-            if(inputStreamResource.getFileName().isBlank()){
-                inputStreamResource.setFileName("report_"+UUID.randomUUID().toString()+".docx");
-            }
             String format = String.format("attachment; filename=%s", inputStreamResource.getFileName());
             headers.add(HttpHeaders.CONTENT_DISPOSITION,format );
             return ResponseEntity.ok()
                     .headers(headers)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(inputStreamResource.getInputStreamResource());
-        }catch (NullPointerExceptionImpl e){
-            return new ServerExceptionImpl().getResponseEntity();
         }catch (MyException e){
             return e.getResponseEntity();
         }catch (Exception e){

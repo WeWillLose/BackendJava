@@ -42,6 +42,9 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     CanEditService canEditService;
 
+    @Autowired
+    FileNameServiceImpl fileNameService;
+
     private final String PATTERN = "\\{\\{([a-zA-z0-9]+)}}";
 
 
@@ -55,7 +58,8 @@ public class ReportServiceImpl implements ReportService {
         if(report == null){
             throw new ReportNotFoundExceptionImpl(reportId);
         }
-        return new InputStreamResourceDTO(reportDocxService.createReportDocx(report,PATTERN),report.getName());
+
+        return new InputStreamResourceDTO(reportDocxService.createReportDocx(report,PATTERN),fileNameService.getReportFileNameOrDefault(report.getName()));
     }
 
     public Report saveReport(Report report, Long authorId) {
@@ -64,9 +68,8 @@ public class ReportServiceImpl implements ReportService {
         if(author == null){
             throw new UserNotFoundExceptionImpl(authorId);
         }
-        if(report.getName() ==null || report.getName().isBlank()){
-            report.setName(generateReportDocxNameFromAuthorFIOOrUUID(author));
-        }
+        report.setName(fileNameService.AddSuffixToNameOrDefault(report.getName()));
+
         if(report.getData()!=null && author.getChairman() !=null){
             ((ObjectNode)report.getData()).put("chairmanFIO", String.format("%s %.1s. %.1s.",author.getChairman().getLastName(),author.getChairman().getFirstName(),
                     author.getChairman().getPatronymic()));
@@ -129,8 +132,8 @@ public class ReportServiceImpl implements ReportService {
         if(!canEditService.canEditReportWithChairman((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal(),report)){
             throw new ForbiddenExceptionImpl();
         }
-        if(reportDTO.getName()!=null&& !reportDTO.getName().isBlank()){
-            report.setName(reportDTO.getName());
+        if(reportDTO.getName()!=null && !reportDTO.getName().isBlank()){
+            report.setName(fileNameService.AddSuffixToNameOrDefault(reportDTO.getName()));
         }
         if(reportDTO.getData()!=null){
             report.setData(reportDTO.getData());

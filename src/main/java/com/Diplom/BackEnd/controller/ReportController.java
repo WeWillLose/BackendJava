@@ -44,9 +44,6 @@ public class ReportController {
         try{
         InputStreamResourceDTO inputStreamResource = reportService.generateReportDocx(id);
         HttpHeaders headers = new HttpHeaders();
-        if(inputStreamResource.getFileName().isBlank()){
-            inputStreamResource.setFileName("report_"+UUID.randomUUID().toString()+".docx");
-        }
         String format = String.format("attachment; filename=%s", inputStreamResource.getFileName());
         headers.add(HttpHeaders.CONTENT_DISPOSITION,format );
         return ResponseEntity.ok()

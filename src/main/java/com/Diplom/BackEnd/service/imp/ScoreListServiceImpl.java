@@ -33,6 +33,8 @@ public class ScoreListServiceImpl {
     private ReportService reportService;
     @Value("${report.pathToScoreListTemplate}")
     private String pathToScoreListTemplate;
+    @Autowired
+    FileNameServiceImpl fileNameService;
 
     private final String REGEXP = "\\{\\{(.+?)}}";
 
@@ -332,9 +334,11 @@ public class ScoreListServiceImpl {
         if(data == null || data.isEmpty()){
             return "-";
         }
-        if(data.get(0).isEmpty()){
+        if(data.get(0) == null || data.get(0).isEmpty()){
             return "-";
         }
+        if(data.get(0).get(0) == null || data.get(0).get(0).isEmpty())
+            return "-";
         return "+";
     }
 
@@ -421,10 +425,7 @@ public class ScoreListServiceImpl {
         }
         Report byReportId = reportService.getByReportId(reportId);
         if (byReportId != null) {
-            if(byReportId.getName().isBlank()){
-                byReportId.setName("report_"+UUID.randomUUID().toString()+".docx");
-            }
-            return new InputStreamResourceDTO(generateScoreList(byReportId, REGEXP),byReportId.getName());
+            return new InputStreamResourceDTO(generateScoreList(byReportId, REGEXP),fileNameService.getScoreListFileNameOrDefault(byReportId.getName()));
         }else{
             throw new ReportNotFoundExceptionImpl();
         }
